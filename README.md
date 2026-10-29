@@ -173,17 +173,40 @@ Your own channels use `yt-dlp` and Node.js. The Docker image includes both, and 
 
 There's a ready-made image, `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, built from this repo for both x86 and ARM. It already contains ffmpeg, yt-dlp, Node.js, the Intel GPU drivers, the fonts, the music and the example channels (in `/app/examples`).
 
-**Unraid, with the template:**
-1. Open Unraid's terminal (the `>_` icon at the top right) and run this. It downloads the template into your user templates:
-   ```bash
-   wget -O /boot/config/plugins/dockerMan/templates-user/my-spelunkr-bridge.xml https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/unraid/spelunkr-bridge.xml
-   ```
-2. Docker tab → **Add Container** → **Template** dropdown → pick **spelunkr-bridge** (under User templates).
-3. Set **Public URL** to `http://YOUR-UNRAID-IP:8765`.
-4. **Intel GPU:** keep the `/dev/dri` device and set **GPU render node** to the one Jellyfin uses (Dashboard → Playback → Transcoding → QSV Device). No Intel GPU? Remove the device and it uses the CPU.
-5. Apply. Check the log for `lineup loaded`, then open `http://YOUR-UNRAID-IP:8765/`.
+### Unraid, step by step
 
-**Unraid by hand:** Docker tab → Add Container with these settings:
+**1. Get the template.** Open Unraid's terminal (the `>_` icon at the top right) and paste this whole line:
+```bash
+wget -O /boot/config/plugins/dockerMan/templates-user/my-spelunkr-bridge.xml https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/unraid/spelunkr-bridge.xml
+```
+It should end with `my-spelunkr-bridge.xml’ saved`.
+
+**2. Create the container.** Docker tab → **Add Container** → **Template** dropdown → **spelunkr-bridge** (under User templates). Then:
+- **Public URL:** `http://YOUR-UNRAID-IP:8765`
+- **GPU render node:** the one Jellyfin uses (Jellyfin → Dashboard → Playback → Transcoding → QSV Device), e.g. `/dev/dri/renderD128`. No Intel GPU? Remove the **Intel GPU** device and leave this empty; it uses the CPU.
+- Leave the rest as is, then click **Apply**.
+
+**3. Optional: add the example channels** (Hack Fraud TV and EISTV). In the terminal:
+```bash
+wget -O /mnt/user/appdata/spelunkr/channels.json https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/examples/channels.json
+```
+Then restart the container (click its icon → **Restart**). To build your own channel instead, see [Make your own channel](#make-your-own-channel).
+
+**4. Check the log** (container icon → **Logs**). When it's ready you'll see:
+```
+lineup loaded: 31 channels                 (or "33 channels (2 custom)" with the examples)
+encoding on the GPU: Intel Quick Sync on /dev/dri/renderD128     (or "the CPU (x264)")
+ready - M3U: http://YOUR-UNRAID-IP:8765/playlist.m3u
+```
+With the examples, the first start takes about 2 minutes while it reads the YouTube playlists. A few `can't be played (Sign in to confirm your age…)` warnings are normal; those videos are skipped.
+
+**5. Add it to Jellyfin.** See [Adding it to Jellyfin](#adding-it-to-jellyfin).
+
+**Updating:** whenever this repo changes, a new image is built within a few minutes. To install it, go to Docker tab → **Check for Updates**, then click **update ready** on the container. Your settings and `channels.json` are kept. To update automatically, install the **Auto Update Applications** plugin from the Apps tab. If the example channels change, re-run the command in step 3 to get the new copy (this replaces your `channels.json`).
+
+### Other ways to set it up
+
+**Unraid by hand** (without the template): Docker tab → Add Container with these settings:
 - Repository: `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, Network: Bridge
 - Port: `8765` → `8765`
 - Path: `/config` → `/mnt/user/appdata/spelunkr`
@@ -202,9 +225,9 @@ There's a ready-made image, `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, b
 | `UPDATE_YTDLP` | `true` (default) updates yt-dlp at every start |
 | `TZ` | Your timezone, e.g. `America/Chicago` (Unraid sets this itself) |
 
-The `/config` folder holds the saved schedules. To change the custom channels, copy [`channels.json`](channels.json) into `/config`, edit it, and restart. Music paths like `music/...` still find the built-in music; to use your own, put a `music` folder in `/config`.
+The `/config` folder holds the saved schedules and your `channels.json`, if you add one (start from [`examples/`](examples/)). Music paths like `music/...` still find the built-in music; to use your own, put a `music` folder in `/config`.
 
-**Updating:** Docker tab → **Check for Updates** → apply, or `docker compose pull && docker compose up -d`.
+**Updating with Compose:** `docker compose pull && docker compose up -d`.
 
 **Moving from the old `python:3.12-alpine` + Post Arguments setup:**
 1. Change the Repository to the image above.
