@@ -174,8 +174,11 @@ Your own channels use `yt-dlp` and Node.js. The Docker image includes both, and 
 There's a ready-made image, `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, built from this repo for both x86 and ARM. It already contains ffmpeg, yt-dlp, Node.js, the Intel GPU drivers, the fonts, the music and the example channels (in `/app/examples`).
 
 **Unraid, with the template:**
-1. Docker tab → **Template repositories** (at the bottom of the page). Add `https://github.com/bwhiteman12-code/spelunkr-bridge` and click Save.
-2. **Add Container** → Template → pick **spelunkr-bridge**.
+1. Open Unraid's terminal (the `>_` icon at the top right) and run this. It downloads the template into your user templates:
+   ```bash
+   wget -O /boot/config/plugins/dockerMan/templates-user/my-spelunkr-bridge.xml https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/unraid/spelunkr-bridge.xml
+   ```
+2. Docker tab → **Add Container** → **Template** dropdown → pick **spelunkr-bridge** (under User templates).
 3. Set **Public URL** to `http://YOUR-UNRAID-IP:8765`.
 4. **Intel GPU:** keep the `/dev/dri` device and set **GPU render node** to the one Jellyfin uses (Dashboard → Playback → Transcoding → QSV Device). No Intel GPU? Remove the device and it uses the CPU.
 5. Apply. Check the log for `lineup loaded`, then open `http://YOUR-UNRAID-IP:8765/`.
