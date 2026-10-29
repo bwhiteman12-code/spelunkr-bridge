@@ -26,6 +26,7 @@ import functools
 import html
 import json
 import logging
+import logging.handlers
 import math
 import os
 import queue
@@ -2570,7 +2571,6 @@ def main():
     if sys.stderr:                       # pythonw.exe has no console
         handlers.append(logging.StreamHandler())
     if a.log_file:
-        import logging.handlers
         handlers.append(logging.handlers.RotatingFileHandler(a.log_file, maxBytes=5_000_000, backupCount=1,
                                                              encoding="utf-8"))
     logging.basicConfig(level=logging.DEBUG if a.verbose else logging.INFO, handlers=handlers or None,
