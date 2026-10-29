@@ -5,6 +5,7 @@
 #   install-windows.bat -NoAutostart    only install the requirements
 #   install-windows.bat -Port 9000      use another port (default 8765)
 #   install-windows.bat -Lan            also let other devices open the status page / streams directly
+# Other options (e.g. --no-static) go in options.txt next to this file.
 param([switch]$Uninstall, [switch]$NoAutostart, [switch]$Lan, [int]$Port = 8765)
 
 $ErrorActionPreference = "Stop"
@@ -108,6 +109,11 @@ Step "Starting in the background"
 Stop-Bridge
 $hostArg = if ($Lan) { "0.0.0.0" } else { "127.0.0.1" }
 $argLine = "`"$Script`" --host $hostArg --port $Port --log-file `"$LogFile`""
+$OptionsFile = Join-Path $Here "options.txt"
+if (Test-Path $OptionsFile) {
+    $extra = (Get-Content $OptionsFile | ForEach-Object { ($_ -split "#", 2)[0].Trim() } | Where-Object { $_ }) -join " "
+    if ($extra) { $argLine += " $extra"; Say "Options from options.txt: $extra" }
+}
 $action = New-ScheduledTaskAction -Execute $PythonW -Argument $argLine -WorkingDirectory $Here
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -AllowStartIfOnBatteries `

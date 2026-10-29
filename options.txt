@@ -1,0 +1,7 @@
+# Extra options for Spelunkr Bridge on Windows.
+# Remove the first # in front of a line to turn it on, save, then run install-windows.bat again.
+
+# --no-static              # no TV snow while a channel tunes in
+# --no-logo-bug            # no channel logo in the corner during shows
+# --no-vhs-cards           # bump cards drawn clean instead of as worn VHS
+# --skip vacation-slides   # leave channels out (comma-separated ids)

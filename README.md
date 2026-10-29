@@ -69,6 +69,33 @@ The script re-checks the lineup every 30 minutes. Everything it downloads is sav
 - **Episode descriptions:** YouTube episodes get their real descriptions in the guide (just the first paragraph, without the links and plugs). These are fetched in the background a batch at a time after the first start, and saved.
 - **Unplayable videos:** some YouTube videos are age-restricted and can't play without signing in. The background description pass checks every video and drops these from the lineup. If one is ever found while airing, the channel moves to the next show within 30 seconds. Otherwise the change takes effect at the next show. Everything after the dropped video moves up, so Jellyfin's guide catches up at its next Refresh Guide.
 
+### Turning the extras off
+
+The TV static, the corner logo and the VHS-style bump cards are on for every channel by default. Each has an option to turn it off:
+
+| Option | Turns off |
+|---|---|
+| `--no-static` | the TV snow while a channel tunes in |
+| `--no-logo-bug` | the channel logo in the corner during shows |
+| `--no-vhs-cards` | the worn-VHS look on bump cards (they're drawn clean) |
+
+**Windows:**
+1. Open `options.txt` in the Spelunkr Bridge folder with Notepad.
+2. Remove the first `#` in front of each option you want, then save. For example:
+   ```
+   --no-static              # no TV snow while a channel tunes in
+   --no-logo-bug            # no channel logo in the corner during shows
+   # --no-vhs-cards           # bump cards drawn clean instead of as worn VHS
+   ```
+   Here the static and the corner logo are turned off, and the VHS cards stay on.
+3. Run `install-windows.bat` again to restart it with the new options.
+
+**Unraid:** Docker tab → click the container → **Edit** → set **Extra options** to e.g. `--no-static --no-logo-bug`. On a hand-made container, add a Variable `EXTRA_ARGS` instead. Then Apply.
+
+**Docker Compose:** set `EXTRA_ARGS=--no-static --no-logo-bug` under `environment:` in `docker-compose.yml`, then run `docker compose up -d`.
+
+The same works for any other [option](#options), e.g. `--skip vacation-slides` to leave a channel out.
+
 ## Your own channels (channels.json)
 
 Out of the box you get spelunkr.tv's channels. You can add your own channels built from YouTube playlists. They run on the same scheduler as Spelunkr's, with bump cards, music, commercial breaks and a guide. They're defined in a file called `channels.json`:
