@@ -1737,13 +1737,20 @@ class Streamer:
                "-f", "bv*[height<=%d][vcodec^=avc1]+ba[ext=m4a]/b[height<=%d]/b" % (self.h, self.h), "-j"]
         if shutil.which("node"):
             cmd += ["--js-runtimes", "node"]
-        out = subprocess.run(cmd + ["https://www.youtube.com/watch?v=" + vid],
-                             capture_output=True, text=True, encoding="utf-8", timeout=90, **NO_WINDOW)
-        try:
-            info = json.loads(out.stdout) if out.returncode == 0 else {}
-        except ValueError:
-            info = {}
-        fmts = info.get("requested_formats") or ([info] if info.get("url") else [])
+        # Ask as YouTube's "simple TV" app first. Links from the full TV app (yt-dlp's usual pick when Node.js
+        # is installed) are refused (403) when ffmpeg opens them for some channels' videos; the simple app's
+        # aren't. If it can't provide this video, fall back to yt-dlp's normal choice.
+        fmts, out = [], None
+        for client in (["--extractor-args", "youtube:player_client=tv_simply"], []):
+            out = subprocess.run(cmd + client + ["https://www.youtube.com/watch?v=" + vid],
+                                 capture_output=True, text=True, encoding="utf-8", timeout=90, **NO_WINDOW)
+            try:
+                info = json.loads(out.stdout) if out.returncode == 0 else {}
+            except ValueError:
+                info = {}
+            fmts = info.get("requested_formats") or ([info] if info.get("url") else [])
+            if fmts:
+                break
         urls = [f["url"] for f in fmts if str(f.get("url", "")).startswith("http")][:2]
         if not urls:
             raise RuntimeError("yt-dlp: " + ((out.stderr or "").strip().splitlines() or ["no stream found"])[-1])
