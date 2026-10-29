@@ -215,6 +215,28 @@ With the examples, the first start takes about 2 minutes while it reads the YouT
 
 **Compose (Compose Manager plugin or any Docker host):** use [`docker-compose.yml`](docker-compose.yml). Set `PUBLIC_URL` and `TZ`, then run `docker compose up -d`.
 
+### Other NAS systems
+
+The image runs on any NAS or server with Docker. Use the [`docker-compose.yml`](docker-compose.yml) and change three things:
+- the folder on the left of `:/config` to one on your NAS
+- `PUBLIC_URL` to your NAS's IP address
+- `TZ` to your timezone
+
+| NAS / OS | Where to set it up |
+|---|---|
+| **Synology** (DSM 7.2+) | **Container Manager → Project → Create**. Create a folder first, e.g. `/volume1/docker/spelunkr`, and use it for `/config`. Paste the compose file. |
+| **QNAP** | **Container Station → Applications → Create**. Paste the compose file, with a folder like `/share/Container/spelunkr`. |
+| **TrueNAS SCALE** | **Apps → Discover Apps → Custom App**. Image `ghcr.io/bwhiteman12-code/spelunkr-bridge`, tag `latest`. Port 8765. A host path for `/config`. Environment variable `PUBLIC_URL`. |
+| **OpenMediaVault** | **Services → Compose → Files → Create**. Paste the compose file. |
+| **CasaOS, Portainer, plain Linux** | Import or paste the compose file, or `docker compose up -d`. |
+
+Things to know:
+- **GPU encoding is Intel only** in the Docker image (Quick Sync / VAAPI). Many Intel-based Synology and QNAP models have it. If your NAS has no `/dev/dri` folder (AMD, NVIDIA or ARM), **delete the `devices:` lines** from the compose file. Otherwise the container won't start. It then encodes on the CPU, which most x86 NASes handle fine at 640×480.
+- **ARM NASes** (e.g. Synology "j" models) work with the 64-bit ARM image, but CPU encoding with the VHS card look is heavy for small chips. One stream is usually OK. To lighten it, add `--no-vhs-cards` to `EXTRA_ARGS`. 32-bit ARM isn't supported.
+- **Your own channels:** put `channels.json` in the folder you mapped to `/config`, then restart the container.
+- **Updating:** pull the image again and recreate the container. In most NAS apps that's an **Update** or **Pull** button on the project or container.
+- Only Unraid and Windows have been tested so far. If you get it running on another NAS, an issue or pull request with your steps is welcome.
+
 **Settings:**
 
 | Variable | What it does |
