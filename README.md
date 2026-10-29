@@ -2,7 +2,20 @@
 
 Turns the 30 channels on [spelunkr.tv](https://spelunkr.tv/) into live TV channels with a full TV guide in Jellyfin. The channels run in sync with the website: the same show, bump card and commercial plays at the same moment as on spelunkr.tv.
 
-**Download:** grab `Spelunkr-Bridge-Windows.zip` from the [latest release](../../releases/latest), or use **Code → Download ZIP** above. Then follow [Setup on Windows](#setup-on-windows-jellyfin-on-your-own-pc) or [Setup on Unraid](#setup-on-unraid).
+## Install
+
+**Windows, with Jellyfin on your own PC:**
+1. Download `Spelunkr-Bridge-Windows.zip` from the [latest release](../../releases/latest).
+2. Unzip it somewhere permanent, e.g. `C:\Spelunkr Bridge`.
+3. Double-click `install-windows.bat`. When it's ready, it shows the two URLs.
+4. In Jellyfin, go to Dashboard → Live TV:
+   - add an **M3U Tuner** with `http://localhost:8765/playlist.m3u`
+   - add an **XMLTV** guide with `http://localhost:8765/epg.xml`
+   - click **Refresh Guide Data**
+
+Details: [Setup on Windows](#setup-on-windows-jellyfin-on-your-own-pc).
+
+**Unraid / Docker:** see [Setup on Unraid](#setup-on-unraid) and [Adding it to Jellyfin](#adding-it-to-jellyfin).
 
 *A fan project, not affiliated with spelunkr.tv, Everything Is Terrible! or RedLetterMedia.*
 
