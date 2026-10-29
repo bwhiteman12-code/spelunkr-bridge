@@ -24,7 +24,6 @@ The music beds under the bump cards on the custom channels. All of them are Crea
 | kevin-macleod-local-forecast-elevator.mp3 | Local Forecast - Elevator | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-local-forecast.mp3 | Local Forecast | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-metalmania.mp3 | Metalmania | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
-| kevin-macleod-monkeys-spinning-monkeys.mp3 | Monkeys Spinning Monkeys | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-monster-promenade.mp3 | Monster Promenade | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-on-hold-for-you.mp3 | On Hold for You | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-presenterator.mp3 | Presenterator | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |

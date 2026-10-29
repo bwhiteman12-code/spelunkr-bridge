@@ -1294,14 +1294,6 @@
           "license_version": "4.0"
         },
         {
-          "file": "music/kevin-macleod-monkeys-spinning-monkeys.mp3",
-          "title": "Monkeys Spinning Monkeys",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
           "file": "music/kevin-macleod-disco-lounge.mp3",
           "title": "Disco Lounge",
           "artist": "Kevin MacLeod",
@@ -2615,14 +2607,6 @@
         {
           "file": "music/kevin-macleod-funkorama.mp3",
           "title": "Funkorama",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
-          "file": "music/kevin-macleod-monkeys-spinning-monkeys.mp3",
-          "title": "Monkeys Spinning Monkeys",
           "artist": "Kevin MacLeod",
           "source": "incompetech.com",
           "license": "by",
