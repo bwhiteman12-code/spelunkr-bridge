@@ -1683,6 +1683,7 @@ class Streamer:
         # custom channels can add more with "vhs" in channels.json.
         self.vhs = self._vhs_base = frozenset(["cards"] if vhs_cards else [])
         self._yt = {}                                  # video id -> (good until, [stream urls])
+        self._url_headers = {}                         # stream url -> the HTTP headers yt-dlp used for it
         self._yt_lock = threading.Lock()
 
     def sized(self, channel):
@@ -1733,19 +1734,36 @@ class Streamer:
             if hit and time.time() < hit[0]:
                 return hit[1]
         cmd = [PYTHON, "-m", "yt_dlp", "--no-warnings", "--no-playlist",
-               "-f", "bv*[height<=%d][vcodec^=avc1]+ba[ext=m4a]/b[height<=%d]/b" % (self.h, self.h), "-g"]
+               "-f", "bv*[height<=%d][vcodec^=avc1]+ba[ext=m4a]/b[height<=%d]/b" % (self.h, self.h), "-j"]
         if shutil.which("node"):
             cmd += ["--js-runtimes", "node"]
         out = subprocess.run(cmd + ["https://www.youtube.com/watch?v=" + vid],
-                             capture_output=True, text=True, timeout=90, **NO_WINDOW)
-        urls = [u for u in out.stdout.split() if u.startswith("http")]
-        if out.returncode != 0 or not urls:
+                             capture_output=True, text=True, encoding="utf-8", timeout=90, **NO_WINDOW)
+        try:
+            info = json.loads(out.stdout) if out.returncode == 0 else {}
+        except ValueError:
+            info = {}
+        fmts = info.get("requested_formats") or ([info] if info.get("url") else [])
+        urls = [f["url"] for f in fmts if str(f.get("url", "")).startswith("http")][:2]
+        if not urls:
             raise RuntimeError("yt-dlp: " + ((out.stderr or "").strip().splitlines() or ["no stream found"])[-1])
+        # YouTube can refuse links opened with different headers than the ones yt-dlp used to get them
+        with self._yt_lock:
+            for f in fmts[:2]:
+                if f.get("http_headers"):
+                    self._url_headers[f["url"]] = f["http_headers"]
         m = re.search(r"[?&/]expire[=/](\d+)", urls[0])
         good_until = int(m.group(1)) - 1800 if m else time.time() + 3600
         with self._yt_lock:
-            self._yt[vid] = (good_until, urls[:2])
-        return urls[:2]
+            self._yt[vid] = (good_until, urls)
+        return urls
+
+    def forget_youtube_urls(self, urls):
+        """Drop cached stream links (e.g. after YouTube refused them twice) so the next try gets fresh ones."""
+        with self._yt_lock:
+            for vid in [v for v, (_, u) in self._yt.items() if set(u) & set(urls)]:
+                for x in self._yt.pop(vid)[1]:
+                    self._url_headers.pop(x, None)
 
     def _head(self):
         return [self.ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin"] + hw_args(self.hw)
@@ -1787,9 +1805,14 @@ class Streamer:
         return f + (self._tail() if tail else "")
 
     def _net_in(self, url, seek, realtime=True):
-        net = (["-user_agent", USER_AGENT, "-rw_timeout", "20000000",
-                "-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "10"]
-               if url.startswith("http") else [])
+        net = []
+        if url.startswith("http"):
+            hdrs = dict(self._url_headers.get(url) or {})
+            ua = hdrs.pop("User-Agent", None) or USER_AGENT
+            net = ["-user_agent", ua, "-rw_timeout", "20000000",
+                   "-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "10"]
+            if hdrs:
+                net += ["-headers", "".join("%s: %s\r\n" % kv for kv in hdrs.items())]
         return net + ["-ss", "%.3f" % max(0.0, seek)] + (["-re"] if realtime else []) + ["-i", url]
 
     def _logo_file(self, channel, tmp):
@@ -2122,6 +2145,7 @@ class Streamer:
             nxt = None
         behind = None          # seconds the viewer's picture runs behind the schedule
         switched = time.monotonic()
+        yt_retries = 0         # quick retries after YouTube refused a stream
         try:
             while not stop.is_set():
                 measured = False
@@ -2161,17 +2185,31 @@ class Streamer:
                     self.startup[cur.kind] = round(0.7 * self.startup[cur.kind] + 0.3 * min(took, 20.0), 2)
                 cur.cleanup()
                 if code == 0 and cur.sent:
+                    yt_retries = 0
                     cur, nxt = ((nxt.get() if nxt else None)
                                 or self._launch(cid, cur.sched + int(cur.dur * 1000), cur.ts + cur.dur + TS_GAP)), None
                     switched = time.monotonic()
                     continue
                 # this segment broke
                 err = " | ".join(cur.errors[-3:]) or "(no output)"
-                log.warning("[%s] ffmpeg exited %s: %s", cid, code, err)
+                log.warning("[%s] ffmpeg exited %s: %s", cid, code,
+                            re.sub(r"https://[^ ]*googlevideo\.com/\S+", "<YouTube stream>", err))
                 played = (time.monotonic() - cur.first) if cur.first else 0.0
                 if nxt:
                     nxt.kill()
                     nxt = None
+                if cur.kind == "youtube" and "403" in err and yt_retries < 2:
+                    # YouTube sometimes refuses the first request for a link that works moments later:
+                    # try again right away; the second time, with freshly fetched links
+                    yt_retries += 1
+                    if yt_retries == 2:
+                        self.forget_youtube_urls([a for a in cur.cmd if "googlevideo.com" in a])
+                    log.info("[%s] YouTube refused the stream, trying again (%d)", cid, yt_retries)
+                    time.sleep(0.5)
+                    cur = self._launch(cid, None, cur.ts + played + TS_GAP)
+                    switched = time.monotonic()
+                    continue
+                yt_retries = 0
                 if "matches no streams" in err or "Stream map" in err:
                     url = next((cur.cmd[i + 1] for i, a in enumerate(cur.cmd[:-1]) if a == "-i" and cur.cmd[i + 1].startswith("http")), None)
                     if url and url not in self._silent:
