@@ -4,7 +4,8 @@
 #    node Jellyfin uses (Dashboard > Playback > Transcoding > QSV Device), or leave it empty to try each.
 #    No Intel GPU? Delete the "devices" lines; it encodes on the CPU.
 # 3. docker compose up -d
-# To use your own channel list, put a channels.json in the /config folder and restart.
+# To add your own YouTube channels, put a channels.json in the /config folder and restart
+# (start from examples/ in the repo).
 services:
   spelunkr:
     image: ghcr.io/bwhiteman12-code/spelunkr-bridge:latest

@@ -13,8 +13,9 @@ RUN apk add --no-cache ffmpeg font-dejavu tzdata nodejs \
  && pip install --no-cache-dir --disable-pip-version-check --root-user-action=ignore "yt-dlp[default]"
 
 WORKDIR /app
-COPY spelunkr2jellyfin.py channels.json star4000.ttf star4000-large.ttf docker-entrypoint.sh ./
+COPY spelunkr2jellyfin.py star4000.ttf star4000-large.ttf docker-entrypoint.sh ./
 COPY music ./music
+COPY examples ./examples
 RUN chmod +x docker-entrypoint.sh
 
 ENV PYTHONUNBUFFERED=1 \

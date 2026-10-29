@@ -63,7 +63,7 @@ The script re-checks the lineup every 30 minutes. Everything it downloads is sav
   - head-switching noise along the bottom edge
   - a tracking glitch that rolls through for under a second about every 41 seconds
 
-  Hack Fraud TV's episodes get the same treatment, because they're shot digitally and would otherwise look too clean. The filter runs on the CPU at SD size, so it's light even when encoding on the GPU. Turn it off for cards with `--no-vhs-cards`. In `channels.json`, `"vhs": ["shows"]` adds it to a channel's shows, and `"ads"` adds it to its commercials.
+  The example Hack Fraud TV channel gives its episodes the same treatment, because they're shot digitally and would otherwise look too clean. The filter runs on the CPU at SD size, so it's light even when encoding on the GPU. Turn it off for cards with `--no-vhs-cards`. In `channels.json`, `"vhs": ["shows"]` adds it to a channel's shows, and `"ads"` adds it to its commercials.
 - **Shared streams:** every TV watching the same channel shares one stream and one encode, so 4 TVs on one channel cost the same as 1. A TV that tunes in later joins at the live point. A channel stays on the air for 30 seconds after its last viewer leaves, so flipping away and back is instant.
 - **GPU encoding:** with `/dev/dri` passed into the container, the bridge encodes on an Intel GPU through Quick Sync (or VAAPI) instead of the CPU. At startup it runs a 1-second test encode and logs `encoding on the GPU: Quick Sync on /dev/dri/renderD129`. If the GPU doesn't work, it logs why and uses the CPU. Use `--gpu-device` to pick the same render node Jellyfin uses.
 - **Episode descriptions:** YouTube episodes get their real descriptions in the guide (just the first paragraph, without the links and plugs). These are fetched in the background a batch at a time after the first start, and saved.
@@ -71,7 +71,30 @@ The script re-checks the lineup every 30 minutes. Everything it downloads is sav
 
 ## Your own channels (channels.json)
 
-`channels.json` next to the script adds extra channels that run on the same scheduler as Spelunkr's, with bump cards, music and commercials. It ships with two. The first is **Hack Fraud TV** (channel 300), a RedLetterMedia fan channel that isn't affiliated with RedLetterMedia. It mixes three shows from their YouTube playlists:
+Out of the box you get spelunkr.tv's channels. You can add your own channels built from YouTube playlists. They run on the same scheduler as Spelunkr's, with bump cards, music, commercial breaks and a guide. They're defined in a file called `channels.json`:
+
+- **Windows:** next to `spelunkr2jellyfin.py`. Run `install-windows.bat` again afterwards, so it can set up Node.js.
+- **Docker / Unraid:** in the `/config` folder, e.g. `/mnt/user/appdata/spelunkr/channels.json`. Restart the container afterwards.
+
+### Make your own channel
+
+1. Copy [`examples/starter-channels.json`](examples/starter-channels.json) to where it goes (above) and rename it `channels.json`.
+2. Change these:
+   - `id`: a short name with no spaces, used in URLs
+   - `name`: what Jellyfin shows
+   - `dial`: the channel number (Spelunkr's own channels use 1–99)
+   - `color`: the card and logo color
+   - the `playlist` URL: any public YouTube playlist
+3. Write your own `bumps`: the cards between shows. Each card is a few short `slides` shown one after another. `network_bumps` are the station-ID cards that follow them.
+4. Restart. Check the log for `lineup loaded: … (1 custom)` and the channel shows up in Jellyfin after a **Refresh Guide Data**.
+
+Want more than one show on a channel? Replace `"playlist"` with a `"shows"` list, each with its own `name`, `playlists` and `order`. To add another channel, add another entry to `"channels"`. JSON is picky about commas, so if a channel doesn't show up, the log says what's wrong. The full set of settings is listed under [All settings](#all-settings).
+
+### The example channels
+
+[`examples/channels.json`](examples/channels.json) holds two complete channels that use most of the settings. To run them as they are, copy that file to where it goes (above).
+
+**Hack Fraud TV** (channel 300) is a RedLetterMedia fan channel that isn't affiliated with RedLetterMedia. It mixes three shows from their YouTube playlists:
 - **Best of the Worst:** 165 episodes, oldest first.
 - **re:View:** 144 episodes, oldest first.
 - **Mr. Plinkett Reviews:** the Star Wars prequel reviews, then the other reviews oldest first.
@@ -84,21 +107,29 @@ Each show keeps its own order, and the shows are spread evenly through the rotat
 - **Music:** 39 tracks in the `music` folder, trimmed to 100 seconds and leveled to the same loudness. There are 16 by Kevin MacLeod (incompetech.com), plus synthwave, vaporwave, chiptune and smooth jazz from the Internet Archive: Lazerhawk, GUNSHIP, AIRGLOW, Timecrawler 82, Telematix, 2003 Toyota Corolla, MAPL Labs, Thought Pyramid, Dr. Tuxedo and others. Every track is CC BY, CC BY-SA or CC0, and each is credited on screen with title, artist, source and its exact license version.
 - **Picture:** 4:3 at 640×480 with the widescreen episodes letterboxed. To fill the screen instead, like VHS pan & scan, change `"fit": "letterbox"` to `"fit": "crop"`. For widescreen, add `"size": "854x480"`.
 
-It also ships with **EISTV** (Everything Is Terrible TV, channel 301), a fan channel built from all 43 of [Everything Is Terrible!](https://www.youtube.com/@EVERYTHINGISTERRIBLE/playlists)'s YouTube playlists. It isn't affiliated with Everything Is Terrible!.
+**EISTV** (Everything Is Terrible TV, channel 301) is a fan channel built from all 43 of [Everything Is Terrible!](https://www.youtube.com/@EVERYTHINGISTERRIBLE/playlists)'s YouTube playlists. It isn't affiliated with Everything Is Terrible!.
 - **Themed blocks:** the clips are short, so each playlist airs as half-hour blocks of back-to-back clips: a block of PUPPETS!, then COPAGANDA, and so on. Each block is one guide listing, with the clip titles in its description. The themes rotate through the day.
 - **Each clip airs once:** about 900 unique clips (36 hours) before the rotation repeats. A clip that's on several playlists airs under its most specific one. Playlists under 10 minutes fold into a bigger theme their clips also belong to.
 - **Commercials** come after 20+ minutes, between clips. There are no SponsorBlock splits.
 - **Bump cards** are about the art collective, the Jerry Maguire VHS drive (P.O. Box 1996, Nowhere, USA 00000) and "call now" offers. Every phone number is in the 555-01xx range set aside for fiction.
 - Its logo is a pixel-art stained-glass wheel with an all-seeing VHS tape.
 
-Other settings in `channels.json`:
-- `dial` and `color`.
+### All settings
+
+Per channel:
+- `id`, `name`, `dial`, `color`, `description`.
+- `fit`: `"letterbox"` or `"crop"`. `size`: e.g. `"854x480"` for widescreen.
+- `bumps` and `network_bumps`: cards made of `slides`. Add `"show": "Name"` to a card to show it only after that show.
+- `music` and `network_music`: the music beds under the cards. Each track has a `file` (an mp3; paths like `music/...` also find the bundled music folder), `title`, `artist`, `source`, `license` and `license_version`. The credit is shown on screen.
+- `vhs`: `["shows"]` and/or `["ads"]` adds the worn-VHS look to that channel's shows or commercials.
 - `logomark`: a 32×32 pixel grid in Spelunkr's format. An optional `palette` adds your own letter → color pairs.
 - `ads`: years, exclude and boost filters, boost weight.
 - `mid_break_minutes` (default 8) and `ad_gap_minutes` (default 20).
-- `card_seconds`: how long each bump card stays up. Both channels use 20. The slides slow down evenly to fill the time, and a full station break (channel card plus network card) runs about 44 seconds. Leave it out for Spelunkr's own pacing.
+- `card_seconds`: how long each bump card stays up. The examples use 20. The slides slow down evenly to fill the time, and a full station break (channel card plus network card) runs about 44 seconds. Leave it out for Spelunkr's own pacing.
 
 Under `"youtube"`:
+- `"playlist"` (one show) or `"shows"`: a list of `{"name", "playlists", "order"}`. `order` is `"oldest-first"` or the playlist's own order.
+- `"breaks": "sponsorblock"` also puts commercial breaks mid-episode, where SponsorBlock users marked segment changes.
 - `"unique": true` airs each video once.
 - `"min_show_minutes"` (default 10) sets the size below which a playlist folds into a bigger one.
 - `"block_minutes"` groups short clips into blocks.
@@ -107,13 +138,13 @@ Under `"youtube"`:
 
 Edits take effect at the next lineup refresh (every 30 minutes) or on restart.
 
-The first start after adding EISTV takes about 2 extra minutes while it reads the 43 playlists. After that, episode descriptions are fetched in the background, which also finds and drops any age-restricted clips.
+The first start with a new channel takes a little longer while it reads the playlists: about 2 extra minutes for EISTV's 43. After that, episode descriptions are fetched in the background, which also finds and drops any age-restricted clips.
 
-The YouTube channels use `yt-dlp` and Node.js; the Docker image and the Windows installer both include them. The container updates yt-dlp at every start, which matters because YouTube changes often and old versions stop working. Note: streaming YouTube this way isn't permitted by YouTube's terms. It's fine for home tinkering, but keep it personal.
+Your own channels use `yt-dlp` and Node.js. The Docker image includes both, and the Windows installer sets them up once a `channels.json` exists. The container updates yt-dlp at every start, which matters because YouTube changes often and old versions stop working. Note: streaming YouTube this way isn't permitted by YouTube's terms. It's fine for home tinkering, but keep it personal.
 
 ## Setup on Unraid / Docker
 
-There's a ready-made image, `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, built from this repo for both x86 and ARM. It already contains ffmpeg, yt-dlp, Node.js, the Intel GPU drivers, the fonts, the music and the custom channels.
+There's a ready-made image, `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, built from this repo for both x86 and ARM. It already contains ffmpeg, yt-dlp, Node.js, the Intel GPU drivers, the fonts, the music and the example channels (in `/app/examples`).
 
 **Unraid, with the template:**
 1. Docker tab → **Template repositories** (at the bottom of the page). Add `https://github.com/bwhiteman12-code/spelunkr-bridge` and click Save.
@@ -155,16 +186,16 @@ Your existing `channels.json`, music and saved schedules carry over.
 
 ## Setup on Windows (Jellyfin on your own PC)
 
-1. Put this folder somewhere permanent, e.g. `C:\Spelunkr Bridge`. It must contain `spelunkr2jellyfin.py`, `channels.json`, the two `star4000` fonts, the `music` folder and the `install-windows` files.
+1. Put this folder somewhere permanent, e.g. `C:\Spelunkr Bridge`. It must contain `spelunkr2jellyfin.py`, the two `star4000` fonts, the `music` folder and the `install-windows` files.
 2. Double-click **`install-windows.bat`**. It will:
    - find Python 3, or offer to install it with winget
    - install or update yt-dlp, which the YouTube channels need
-   - offer to install Node.js, which YouTube needs to unlock video streams
+   - offer to install Node.js if you've added your own channels (YouTube needs it to unlock video streams)
    - find the ffmpeg that comes with Jellyfin (no separate install needed)
    - start the bridge in the background with no window, and set it to start again every time you log in
    - wait until the channels are loaded, then show the two URLs for Jellyfin
 
-   The first start takes a few minutes while it reads the YouTube playlists.
+   With your own YouTube channels added, the first start takes a few minutes while it reads the playlists.
 3. Add it to Jellyfin as below, using `http://localhost:8765/playlist.m3u` and `http://localhost:8765/epg.xml`.
 
 It encodes on your graphics card when it can: NVIDIA (NVENC), then Intel (Quick Sync), then AMD (AMF), otherwise the CPU. The log is `spelunkr.log` in the folder. What's on now: `http://localhost:8765/`.

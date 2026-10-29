@@ -8,14 +8,14 @@
   <Privileged>false</Privileged>
   <Support>https://github.com/bwhiteman12-code/spelunkr-bridge/issues</Support>
   <Project>https://github.com/bwhiteman12-code/spelunkr-bridge</Project>
-  <Overview>Turns the retro channels on spelunkr.tv (plus Hack Fraud TV and EISTV from YouTube) into live TV with a full guide for Jellyfin. In Jellyfin add an M3U Tuner with http://YOUR-SERVER-IP:8765/playlist.m3u and an XMLTV guide with http://YOUR-SERVER-IP:8765/epg.xml. A fan project, not affiliated with spelunkr.tv.</Overview>
+  <Overview>Turns the retro channels on spelunkr.tv into live TV with a full guide for Jellyfin, and lets you add your own channels built from YouTube playlists. In Jellyfin add an M3U Tuner with http://YOUR-SERVER-IP:8765/playlist.m3u and an XMLTV guide with http://YOUR-SERVER-IP:8765/epg.xml. A fan project, not affiliated with spelunkr.tv.</Overview>
   <Category>MediaServer:Video</Category>
   <WebUI>http://[IP]:[PORT:8765]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/unraid/spelunkr-bridge.xml</TemplateURL>
   <ExtraParams/>
   <PostArgs/>
   <Config Name="Port" Target="8765" Default="8765" Mode="tcp" Description="Web port for the playlist, guide and streams" Type="Port" Display="always" Required="true" Mask="false">8765</Config>
-  <Config Name="Config folder" Target="/config" Default="/mnt/user/appdata/spelunkr" Mode="rw" Description="Saved schedules. Put your own channels.json here to replace the built-in one." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/spelunkr</Config>
+  <Config Name="Config folder" Target="/config" Default="/mnt/user/appdata/spelunkr" Mode="rw" Description="Saved schedules. Put a channels.json here to add your own YouTube channels (see the examples folder in the repo)." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/spelunkr</Config>
   <Config Name="Public URL" Target="PUBLIC_URL" Default="" Mode="" Description="How Jellyfin reaches this container, e.g. http://192.168.1.20:8765" Type="Variable" Display="always" Required="false" Mask="false"></Config>
   <Config Name="Intel GPU" Target="/dev/dri" Default="/dev/dri" Mode="" Description="For Quick Sync / VAAPI encoding. Remove if you have no Intel GPU (it then uses the CPU)." Type="Device" Display="always" Required="false" Mask="false">/dev/dri</Config>
   <Config Name="GPU render node" Target="GPU" Default="" Mode="" Description="The node Jellyfin uses (Dashboard - Playback - Transcoding - QSV Device), e.g. /dev/dri/renderD128. Empty tries each one." Type="Variable" Display="always" Required="false" Mask="false"></Config>

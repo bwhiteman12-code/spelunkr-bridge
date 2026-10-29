@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 spelunkr.log*
 *.zip
+
+# your own channel list (start from examples/)
+/channels.json

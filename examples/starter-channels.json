@@ -1,0 +1,32 @@
+{
+  "_readme": "A one-channel starter. Copy this file next to spelunkr2jellyfin.py (or into /config for Docker), rename it channels.json, and change the name, dial number and playlist. See 'Make your own channel' in the README.",
+  "channels": [
+    {
+      "id": "my-channel",
+      "name": "MY CHANNEL",
+      "dial": 400,
+      "color": "#3fa34d",
+      "description": "My own channel, built from a YouTube playlist.",
+      "youtube": {
+        "playlist": "https://www.youtube.com/playlist?list=PLJ_TJFLc25JR3VZ7Xe-cmt4k3bMKBZ5Tm",
+        "order": "oldest-first"
+      },
+      "card_seconds": 20,
+      "ads": { "years": [1980, 1999] },
+      "bumps": [
+        { "id": "my-001", "slides": [{ "text": "you are watching" }, { "text": "my channel." }] },
+        { "id": "my-002", "slides": [{ "text": "stay tuned." }, { "text": "or don't." }, { "text": "my channel" }] },
+        { "id": "my-003", "slides": [{ "text": "more after this." }] }
+      ],
+      "network_bumps": [
+        { "id": "myn-001", "slides": [{ "text": "my channel" }, { "text": "always on." }] }
+      ],
+      "music": [
+        { "file": "music/kevin-macleod-local-forecast.mp3", "title": "Local Forecast", "artist": "Kevin MacLeod",
+          "source": "incompetech.com", "license": "by", "license_version": "4.0" },
+        { "file": "music/kevin-macleod-eighties-action.mp3", "title": "Eighties Action", "artist": "Kevin MacLeod",
+          "source": "incompetech.com", "license": "by", "license_version": "4.0" }
+      ]
+    }
+  ]
+}

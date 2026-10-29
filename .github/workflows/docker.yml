@@ -47,9 +47,12 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # start the new image and print what's on one channel, to prove it runs
+      # start the new image and print what's on, to prove it runs: once as shipped,
+      # once with the starter channel from examples/
       - name: Smoke test
         run: |
-          docker run --rm -e UPDATE_YTDLP=false \
-            ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }} \
-            --now --only suplex,hack-fraud-tv
+          IMG=ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+          docker run --rm -e UPDATE_YTDLP=false "$IMG" --now --only suplex
+          docker run --rm -e UPDATE_YTDLP=false "$IMG" --now --only suplex,my-channel \
+            --channels /app/examples/starter-channels.json | tee out.txt
+          grep -q '"my-channel"' out.txt

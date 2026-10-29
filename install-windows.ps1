@@ -70,7 +70,7 @@ if (-not (Test-Path $PythonW)) { $PythonW = $Python }
 Say "Using $Python" "Green"
 
 # ---------------------------------------------------------------- yt-dlp
-Step "yt-dlp (for the YouTube channels)"
+Step "yt-dlp (for your own YouTube channels, if you add any)"
 & $Python -m pip install -q -U --disable-pip-version-check "yt-dlp[default]"
 if ($LASTEXITCODE -ne 0) { & $Python -m pip install -q -U --user --disable-pip-version-check "yt-dlp[default]" }
 if ($LASTEXITCODE -ne 0) { Say "Couldn't install yt-dlp. Hack Fraud TV and EISTV won't play; the Spelunkr channels still will." "Yellow" }
@@ -78,7 +78,11 @@ else { Say ("yt-dlp " + (& $Python -m yt_dlp --version)) "Green" }
 
 # ---------------------------------------------------------------- JavaScript runtime
 Step "Node.js (YouTube needs it to unlock video streams)"
-if (Get-Command node, deno -ErrorAction SilentlyContinue) { Say "Found." "Green" }
+if (-not (Test-Path (Join-Path $Here "channels.json"))) {
+    Say "Not needed yet: no channels.json, so only spelunkr.tv's channels will run."
+    Say "To add your own YouTube channels later, see the examples folder, then run this installer again."
+}
+elseif (Get-Command node, deno -ErrorAction SilentlyContinue) { Say "Found." "Green" }
 elseif ((Get-Command winget -ErrorAction SilentlyContinue) -and (Ask "Node.js isn't installed. Install it now with winget?")) {
     winget install -e --id OpenJS.NodeJS.LTS
     $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
@@ -115,7 +119,9 @@ if (Test-Path $LogFile) { Remove-Item $LogFile -Force -ErrorAction SilentlyConti
 Start-ScheduledTask -TaskName $TaskName
 Say "Task '$TaskName' will start it every time you log in." "Green"
 
-Say "Loading the channel lineup (the first start takes a few minutes while it reads the YouTube playlists)..."
+if (Test-Path (Join-Path $Here "channels.json")) {
+    Say "Loading the channel lineup (the first start takes a few minutes while it reads the YouTube playlists)..."
+} else { Say "Loading the channel lineup..." }
 $url = "http://127.0.0.1:$Port"
 $ok = $false
 for ($i = 0; $i -lt 120; $i++) {
