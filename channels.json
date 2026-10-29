@@ -1,0 +1,2730 @@
+{
+  "channels": [
+    {
+      "id": "hack-fraud-tv",
+      "name": "HACK FRAUD TV",
+      "dial": 300,
+      "color": "#E53935",
+      "family": "comedy",
+      "fit": "letterbox",
+      "mid_break_minutes": 8,
+      "description": "RedLetterMedia around the clock: Best of the Worst, re:View and Mr. Plinkett's reviews, with bump cards and 80s and 90s commercials. A fan channel, not affiliated with RedLetterMedia.",
+      "youtube": {
+        "breaks": "sponsorblock",
+        "shows": [
+          {
+            "name": "Best of the Worst",
+            "order": "oldest-first",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLJ_TJFLc25JR3VZ7Xe-cmt4k3bMKBZ5Tm"
+            ]
+          },
+          {
+            "name": "re:View",
+            "order": "oldest-first",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLJ_TJFLc25JSmtBkyIYqgD5KabbU57yzY"
+            ]
+          },
+          {
+            "name": "Mr. Plinkett Reviews",
+            "playlists": [
+              {
+                "url": "https://www.youtube.com/playlist?list=PL5919C8DE6F720A2D",
+                "order": "playlist"
+              },
+              {
+                "url": "https://www.youtube.com/playlist?list=PL56E3EB1DFD4B64A2",
+                "order": "playlist"
+              },
+              {
+                "url": "https://www.youtube.com/playlist?list=PLJ_TJFLc25JTwinvdLo4PP2rTFfTd9Uhz",
+                "order": "playlist"
+              },
+              {
+                "url": "https://www.youtube.com/playlist?list=PL2CCF5FDA9CEEBDB8",
+                "order": "oldest-first"
+              }
+            ]
+          }
+        ]
+      },
+      "logomark": {
+        "type": "pixel",
+        "rows": [
+          "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+          ".kppppppppppppppppppppppppppppk.",
+          "kppppppppppppppppppppppppppppppk",
+          "kpppppnnpppnnppppnnnnnnnpppppppk",
+          "kpppppnnkppnnkpppnnnnnnnkppppppk",
+          "kpppppnnkppnnkpppnnkkkkkkppppppk",
+          "kppppnnnnnnnkkppnnkkpppppppppppk",
+          "kppppnnnnnnnkpppnnnnnnpppppppppk",
+          "kppppnnkkknnkpppnnnnnnkppppppppk",
+          "kpppnnkkpnnkkppnnkkkkkkppppppppk",
+          "kpppnnkppnnkpppnnkpppppppppppppk",
+          "kpppnnkppnnkpppnnkpppppppppppppk",
+          "kppppkkpppkkppppkkpppppppppppppk",
+          "kppppppppppppppppppppppppppppppk",
+          "kppppppppppppppppppppppppppppppk",
+          "kppkkkkkkkkkkkkkkkkkkkkkkkkkkppk",
+          "kppknnnnnnnnnnnnnnnnnnnnnnnnkppk",
+          "kppkkkkkkkkkkkkkkkkkkkkkkkkkkppk",
+          "kppkkksssssssssssskknnnnnnnkkppk",
+          "kppkkksppnnpppnnpskkkkkkkkkkkppk",
+          "kppkkksppkkpppkkpskknnnnnnnkkppk",
+          "kppkkksppnnpppnnpskkkkkkkkkkkppk",
+          "kppkkksssssssssssskknnnnnnnkkppk",
+          "kppkkppppppppppppppppppppppkkppk",
+          "kppkkppppppppcccpcpcpppppppkkppk",
+          "kppkkpppppppppcppcpcpppppppkkppk",
+          "kppkkpppppppppcppcpcpppppppkkppk",
+          "kppkkpppppppppcpppcppppppppkkppk",
+          "kppkkkkkkkkkkkkkkkkkkkkkkkkkkppk",
+          "kppppppppppppppppppppppppppppppk",
+          ".kppppppppppppppppppppppppppppk.",
+          "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk.."
+        ]
+      },
+      "ads": {
+        "years": [
+          1980,
+          1999
+        ],
+        "exclude": "jpcm|ytchannel1|japan|angels-egg|bandai|anime|adv-films|[\\u3040-\\u30ff\\u4e00-\\u9fff]",
+        "boost": "trailer|preview|coming.?attraction|opening.?to|vhs|theatrical|tv.?spot|movie|feature.?presentation|rental|blockbuster",
+        "boost_weight": 3
+      },
+      "bumps": [
+        {
+          "id": "hf-001",
+          "slides": [
+            {
+              "text": "somebody made this movie."
+            },
+            {
+              "text": "on purpose."
+            },
+            {
+              "text": "with money."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-002",
+          "slides": [
+            {
+              "text": "found in a bargain bin."
+            },
+            {
+              "text": "for a reason."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-003",
+          "slides": [
+            {
+              "text": "the box art promised explosions."
+            },
+            {
+              "text": "the box art lied."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-004",
+          "slides": [
+            {
+              "text": "every tape has a story."
+            },
+            {
+              "text": "most of them are bad."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-005",
+          "slides": [
+            {
+              "text": "the director also wrote it."
+            },
+            {
+              "text": "and starred in it."
+            },
+            {
+              "text": "and did the catering."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-006",
+          "slides": [
+            {
+              "text": "be kind."
+            },
+            {
+              "text": "rewind."
+            },
+            {
+              "text": "or don't. we've seen worse."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "hf-007",
+          "slides": [
+            {
+              "text": "a thrift store."
+            },
+            {
+              "text": "a cardboard box."
+            },
+            {
+              "text": "fifty cents a tape."
+            },
+            {
+              "text": "this is what we found."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-008",
+          "slides": [
+            {
+              "text": "the boom mic is in the shot."
+            },
+            {
+              "text": "it has been in the shot for ten minutes."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-009",
+          "slides": [
+            {
+              "text": "nobody asked for a sequel."
+            },
+            {
+              "text": "they made three."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-010",
+          "slides": [
+            {
+              "text": "tracking adjusted."
+            },
+            {
+              "text": "dignity not found."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "hf-011",
+          "slides": [
+            {
+              "text": "shot on video."
+            },
+            {
+              "text": "edited on a hunch."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-012",
+          "slides": [
+            {
+              "text": "this tape came back to the video store"
+            },
+            {
+              "text": "with a note taped to it."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-013",
+          "slides": [
+            {
+              "text": "the stunts were real."
+            },
+            {
+              "text": "the acting was not."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-014",
+          "slides": [
+            {
+              "text": "a man in a rubber suit."
+            },
+            {
+              "text": "a borrowed camcorder."
+            },
+            {
+              "text": "a dream."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-015",
+          "slides": [
+            {
+              "text": "the wheel has spoken."
+            },
+            {
+              "text": "we're so sorry."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-016",
+          "slides": [
+            {
+              "text": "some movies are so bad they're good."
+            },
+            {
+              "text": "these are just bad."
+            },
+            {
+              "text": "mostly."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-017",
+          "slides": [
+            {
+              "text": "rated pg-13 for language, violence,"
+            },
+            {
+              "text": "and continuity errors."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-018",
+          "slides": [
+            {
+              "text": "the plot had a hole."
+            },
+            {
+              "text": "the hole had a plot."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-019",
+          "slides": [
+            {
+              "text": "straight to video."
+            },
+            {
+              "text": "straight to us."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-020",
+          "slides": [
+            {
+              "text": "you've been watching for hours."
+            },
+            {
+              "text": "we're not judging."
+            },
+            {
+              "text": "we're also still here."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "hf-021",
+          "slides": [
+            {
+              "text": "featuring the hit theme song"
+            },
+            {
+              "text": "nobody has ever heard."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-022",
+          "slides": [
+            {
+              "text": "it's a cop movie."
+            },
+            {
+              "text": "it's a karate movie."
+            },
+            {
+              "text": "it's a christmas movie."
+            },
+            {
+              "text": "it's all of them."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-023",
+          "slides": [
+            {
+              "text": "bad movies need love too."
+            },
+            {
+              "text": "not ours. but somebody's."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-024",
+          "slides": [
+            {
+              "text": "late fees waived."
+            },
+            {
+              "text": "forever."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "hf-025",
+          "slides": [
+            {
+              "text": "an instructional video"
+            },
+            {
+              "text": "for something nobody should do."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-026",
+          "slides": [
+            {
+              "text": "more ninjas than budget."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-027",
+          "slides": [
+            {
+              "text": "the trailer was the whole movie."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "hf-028",
+          "slides": [
+            {
+              "text": "the special effects were special."
+            },
+            {
+              "text": "in a way."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ],
+          "show": "Best of the Worst"
+        },
+        {
+          "id": "rv-001",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "some movies get better with age."
+            },
+            {
+              "text": "some just get older."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-002",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "you saw it in theaters."
+            },
+            {
+              "text": "you were twelve."
+            },
+            {
+              "text": "let's see if it holds up."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-003",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "two guys. one movie."
+            },
+            {
+              "text": "a lot of opinions about practical effects."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-004",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "the director's cut."
+            },
+            {
+              "text": "the theatrical cut."
+            },
+            {
+              "text": "the cut you remember."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-005",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "no computers were harmed"
+            },
+            {
+              "text": "in the making of this movie."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-006",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "a classic is just a movie"
+            },
+            {
+              "text": "people never stopped talking about."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-007",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "rewatching it."
+            },
+            {
+              "text": "for research."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-008",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "it bombed at the box office."
+            },
+            {
+              "text": "now it's a cult classic."
+            },
+            {
+              "text": "funny how that works."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-009",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "remember when movies"
+            },
+            {
+              "text": "were allowed to just end?"
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-010",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "the sequel was fine."
+            },
+            {
+              "text": "we're not here to talk about the sequel."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-011",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "they don't make them like this anymore."
+            },
+            {
+              "text": "they tried. it didn't work."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "rv-012",
+          "show": "re:View",
+          "slides": [
+            {
+              "text": "pause it."
+            },
+            {
+              "text": "look at that matte painting."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-001",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "a review longer than the movie."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-002",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "somebody had a lot of feelings"
+            },
+            {
+              "text": "about the prequels."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-003",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "this review contains"
+            },
+            {
+              "text": "a subplot about frozen snacks."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-004",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "the reviewer is fine."
+            },
+            {
+              "text": "please stop asking about the basement."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-005",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "stay in your seat."
+            },
+            {
+              "text": "it's a multi-part review."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-006",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "a long time ago,"
+            },
+            {
+              "text": "someone made a seventy minute video"
+            },
+            {
+              "text": "about a movie he didn't like."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-007",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "describe a character"
+            },
+            {
+              "text": "without saying what they look like."
+            },
+            {
+              "text": "go ahead. we'll wait."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-008",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "trade disputes."
+            },
+            {
+              "text": "senate hearings."
+            },
+            {
+              "text": "you have been warned."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-009",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "the green screen"
+            },
+            {
+              "text": "was the real star."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-010",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "more pie charts"
+            },
+            {
+              "text": "than a quarterly earnings call."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-011",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "a strange old man"
+            },
+            {
+              "text": "has thoughts about star trek."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        },
+        {
+          "id": "pl-012",
+          "show": "Mr. Plinkett Reviews",
+          "slides": [
+            {
+              "text": "brought to you by"
+            },
+            {
+              "text": "frozen snacks and poor decisions."
+            },
+            {
+              "text": "hack fraud tv."
+            }
+          ]
+        }
+      ],
+      "network_bumps": [
+        {
+          "id": "hfn-001",
+          "slides": [
+            {
+              "text": "everything here was a mistake."
+            },
+            {
+              "text": "we kept it anyway."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-002",
+          "slides": [
+            {
+              "text": "no algorithm picked this."
+            },
+            {
+              "text": "a wheel did."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-003",
+          "slides": [
+            {
+              "text": "broadcasting from a basement"
+            },
+            {
+              "text": "full of vhs tapes."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-004",
+          "slides": [
+            {
+              "text": "the worst of the worst."
+            },
+            {
+              "text": "around the clock."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-005",
+          "slides": [
+            {
+              "text": "somebody had to watch these."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-006",
+          "slides": [
+            {
+              "text": "bad movies."
+            },
+            {
+              "text": "all day."
+            },
+            {
+              "text": "all night."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-007",
+          "slides": [
+            {
+              "text": "please stand by."
+            },
+            {
+              "text": "we're looking for the remote."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-008",
+          "slides": [
+            {
+              "text": "commercials courtesy of the internet archive."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-009",
+          "slides": [
+            {
+              "text": "no refunds."
+            },
+            {
+              "text": "no regrets."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-010",
+          "slides": [
+            {
+              "text": "not affiliated with good taste."
+            },
+            {
+              "text": "or with redlettermedia."
+            },
+            {
+              "text": "a fan channel."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-011",
+          "slides": [
+            {
+              "text": "you could be outside."
+            },
+            {
+              "text": "you're not."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        },
+        {
+          "id": "hfn-012",
+          "slides": [
+            {
+              "text": "music by kevin macleod."
+            },
+            {
+              "text": "taste by nobody."
+            },
+            {
+              "text": "hack fraud tv"
+            }
+          ]
+        }
+      ],
+      "music": [
+        {
+          "file": "music/kevin-macleod-eighties-action.mp3",
+          "title": "Eighties Action",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-metalmania.mp3",
+          "title": "Metalmania",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-summon-the-rawk.mp3",
+          "title": "Summon the Rawk",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-monster-promenade.mp3",
+          "title": "Monster Promenade",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-graveyard-shift.mp3",
+          "title": "Graveyard Shift",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-cut-and-run.mp3",
+          "title": "Cut and Run",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-volatile-reaction.mp3",
+          "title": "Volatile Reaction",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-sneaky-snitch.mp3",
+          "title": "Sneaky Snitch",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/lazerhawk-escape-from-germany.mp3",
+          "title": "Escape From Germany",
+          "artist": "Lazerhawk",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/irving-force-back-alley-creepers.mp3",
+          "title": "Back Alley Creepers",
+          "artist": "Irving Force",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/gunship-pink-mist.mp3",
+          "title": "Pink Mist",
+          "artist": "GUNSHIP",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/vhs-glitch-he-sees-you.mp3",
+          "title": "He Sees You",
+          "artist": "VHS Glitch",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/airglow-electrifying-landscape.mp3",
+          "title": "Electrifying Landscape",
+          "artist": "AIRGLOW",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/airglow-memory-bank.mp3",
+          "title": "Memory Bank",
+          "artist": "AIRGLOW",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/timecrawler-82-driving-in-the-rain.mp3",
+          "title": "Driving in the Rain",
+          "artist": "Timecrawler 82",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/timecrawler-82-street-dancing.mp3",
+          "title": "Street Dancing",
+          "artist": "Timecrawler 82",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/telematix-last-train-to-nowhere.mp3",
+          "title": "Last Train To Nowhere",
+          "artist": "Telematix",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/telematix-flashback.mp3",
+          "title": "Flashback",
+          "artist": "Telematix",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/mach-man-mini-cool-runningz.mp3",
+          "title": "Cool Runningz",
+          "artist": "Mach-Man Mini",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/rolemusic-the-great-madeja.mp3",
+          "title": "The Great Madeja",
+          "artist": "rolemusic",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        }
+      ],
+      "network_music": [
+        {
+          "file": "music/kevin-macleod-local-forecast-elevator.mp3",
+          "title": "Local Forecast - Elevator",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-local-forecast.mp3",
+          "title": "Local Forecast",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-on-hold-for-you.mp3",
+          "title": "On Hold for You",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-presenterator.mp3",
+          "title": "Presenterator",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-leopard-print-elevator.mp3",
+          "title": "Leopard Print Elevator",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-funkorama.mp3",
+          "title": "Funkorama",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-monkeys-spinning-monkeys.mp3",
+          "title": "Monkeys Spinning Monkeys",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-disco-lounge.mp3",
+          "title": "Disco Lounge",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/2003-toyota-corolla-2003-toyota-corolla.mp3",
+          "title": "2003 Toyota Corolla",
+          "artist": "2003 Toyota Corolla",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/2003-toyota-corolla-2004-toyota-corolla.mp3",
+          "title": "2004 Toyota Corolla",
+          "artist": "2003 Toyota Corolla",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/ilikestapler-dilbert-2.mp3",
+          "title": "dilbert 2",
+          "artist": "ILikeStapler",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/juice-plus-how-many-ohms-you-got.mp3",
+          "title": "how many ohms you got",
+          "artist": "JUICE PLUS",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/thought-pyramid-endless.mp3",
+          "title": "Endless",
+          "artist": "Thought Pyramid",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "2.0"
+        },
+        {
+          "file": "music/thought-pyramid-morning-cup.mp3",
+          "title": "Morning Cup",
+          "artist": "Thought Pyramid",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "2.0"
+        },
+        {
+          "file": "music/dr-tuxedo-electric-blue.mp3",
+          "title": "Electric Blue",
+          "artist": "Dr. Tuxedo",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/dr-tuxedo-groove-factory.mp3",
+          "title": "Groove Factory",
+          "artist": "Dr. Tuxedo",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/deadman-digi-hartatak-elevatored.mp3",
+          "title": "Elevatored",
+          "artist": "Deadman & Digi Hartatak",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/mach-man-mini-please-hold.mp3",
+          "title": "Please Hold",
+          "artist": "Mach-Man Mini",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/thought-pyramid-quad-cities.mp3",
+          "title": "Quad Cities",
+          "artist": "Thought Pyramid",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "2.0"
+        }
+      ],
+      "card_seconds": 20,
+      "vhs": [
+        "shows"
+      ]
+    },
+    {
+      "id": "eistv",
+      "name": "EISTV",
+      "dial": 301,
+      "color": "#e8457c",
+      "family": "comedy",
+      "fit": "letterbox",
+      "card_seconds": 20,
+      "mid_break_minutes": 20,
+      "description": "EISTV (Everything Is Terrible TV): found footage from the VHS era around the clock, from Everything Is Terrible!'s YouTube playlists in half-hour themed blocks, with bump cards and 80s and 90s commercials. A fan channel, not affiliated with Everything Is Terrible!.",
+      "youtube": {
+        "unique": true,
+        "min_show_minutes": 10,
+        "block_minutes": 30,
+        "stagger": true,
+        "shows": [
+          {
+            "name": "EIT KIDZ KLUB: THE MOVIE!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84dZgxeqSw7o75V6f9gS20r"
+            ]
+          },
+          {
+            "name": "COPAGANDA",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y85wjqk5VMRR1tHrdVjXaUV7"
+            ]
+          },
+          {
+            "name": "CARTOONS!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84Thuj9IqXh0ivZFeXKZd-L"
+            ]
+          },
+          {
+            "name": "BORING",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y85WdyeENmn2biXlRs7P-KXk"
+            ]
+          },
+          {
+            "name": "GLITCH",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y8570XCOBC0i1LYTSn2aphKB"
+            ]
+          },
+          {
+            "name": "STUFF US & OUR PALS MAKE!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y85BvaqrCqnc5t-Lgc6cJ6bF"
+            ]
+          },
+          {
+            "name": "HOUR!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y85QefCO5kx3PeFHLzysLbWC"
+            ]
+          },
+          {
+            "name": "SPORTS!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84B4VR-rM9bmhBFaVatC_9l"
+            ]
+          },
+          {
+            "name": "TEENS",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87EccDZ-7kIWvSsQQUZr394"
+            ]
+          },
+          {
+            "name": "PUPPETS!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84ntrjuAh-AFN8ssE99zche"
+            ]
+          },
+          {
+            "name": "CORPORATIONS ARE TERRIBLE!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y85kjHeU82Aj6oP6xB_gH6XE"
+            ]
+          },
+          {
+            "name": "TERRIBLE CGI!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y862EEDICvuw96TzksVstICO"
+            ]
+          },
+          {
+            "name": "FITNESS!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86cK0NWC98iScshCOEvSRHS"
+            ]
+          },
+          {
+            "name": "TECHNOLOGY",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87hZCO-LBaXid2EOQ7Hjssa"
+            ]
+          },
+          {
+            "name": "SCHLOCK",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86wk4c2kzePcXs22FqhRAex"
+            ]
+          },
+          {
+            "name": "LEARNING IS TERRIBLE!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87-RFKpHFWw7RT7NAa1hygY"
+            ]
+          },
+          {
+            "name": "SPACE",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86xQi1bxvJwWHv85ghL9K5V"
+            ]
+          },
+          {
+            "name": "SEX IS TERRIBLE!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84qBnD3ZhrAXFbSn6r4xIpl"
+            ]
+          },
+          {
+            "name": "CELEBRITIES ARE TERRIBLE!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y841Zqn3kZFf6gt3jW8Pjc2_"
+            ]
+          },
+          {
+            "name": "2 MINUTE MOVIES",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84Ioox9w7ge232fjfgPhFDF"
+            ]
+          },
+          {
+            "name": "THE GREAT SATAN",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87vbMbb7RRyil32FfYzumW5"
+            ]
+          },
+          {
+            "name": "PSYCHEDELIC",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y849DhxJn0KFITm5XYOBdlUb"
+            ]
+          },
+          {
+            "name": "3 MINUTE MOVIES",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86T74hCatYP4zVvx0O1jJ9f"
+            ]
+          },
+          {
+            "name": "USA! USA!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87ooGbkaxNGQNUwxx-mOjeU"
+            ]
+          },
+          {
+            "name": "BAD MOVIES",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86LMPg1GB5zGGb_EeuCjDl5"
+            ]
+          },
+          {
+            "name": "ALIENZ",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84EU5Zy-wCtDXs-RVzAhzZa"
+            ]
+          },
+          {
+            "name": "PATRIARCHY",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84bgxuIFvTfO3mLUbFrRiJu"
+            ]
+          },
+          {
+            "name": "DADS",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y857NCueelkrWcsNFZoIO0MD"
+            ]
+          },
+          {
+            "name": "MOMS",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86TpwN_ymHp0zzqSWLDJkOZ"
+            ]
+          },
+          {
+            "name": "POLITICAL TERRIBLE",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y851Rwqpd7Z7W4kHUbfv_6O6"
+            ]
+          },
+          {
+            "name": "RACISM",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y85PSa0S4YdAT876F4EJXTAO"
+            ]
+          },
+          {
+            "name": "GET RICH QUICK!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84cJciJWUKq8glJngih8eGM"
+            ]
+          },
+          {
+            "name": "ANIMALS!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87FvMG1ryqfL8uzxgbwrFyr"
+            ]
+          },
+          {
+            "name": "DRUGS",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86j6s5Hv7hZEo8-ydYHHiQ2"
+            ]
+          },
+          {
+            "name": "MUSIC",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86lO-FXRDxkjNGeCNmL5f5n"
+            ]
+          },
+          {
+            "name": "COMEDY IS FUNNY",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y85fN0B3Hn_dKut1qgwq8Qyk"
+            ]
+          },
+          {
+            "name": "CREEPS",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87BJIx7uPcUF5xRBSuwA7Vm"
+            ]
+          },
+          {
+            "name": "1 MINUTE MOVIES",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86z_8a1ui7Ww6LKEzi7BcvU"
+            ]
+          },
+          {
+            "name": "BUY THIS THING!",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y86cxoXWSgVLuDymuCWV6UN5"
+            ]
+          },
+          {
+            "name": "HALLOWEEN",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y857HXOw1eH7IlalS4Q7J7dM"
+            ]
+          },
+          {
+            "name": "CHRISTMAS",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84HP0eOgD4COrYbuzQjwEKU"
+            ]
+          },
+          {
+            "name": "RELIGION",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y84ghMzYyGxZU9ZLXSYEabo4"
+            ]
+          },
+          {
+            "name": "EIT KIDZ KLUB",
+            "playlists": [
+              "https://www.youtube.com/playlist?list=PLGAdbivd-Y87K6d84pSR5FFumvmPf04O4"
+            ]
+          }
+        ],
+        "title_strip": "\\s*/{2,}\\s*EVERYTHING IS TERRIBLE!*\\s*$"
+      },
+      "logomark": {
+        "type": "pixel",
+        "rows": [
+          "..............kkkk..............",
+          "..........kkkwwwwwwkkk..........",
+          "........kkwwwkkkkkkwwwkk........",
+          ".......kwwkkmmmmyyyykkwwk.......",
+          ".....kkwkkmmmmmmyyyyyykkwkk.....",
+          "....kkwkwkkmmmmmyyyyykkbkwkk....",
+          "....kwkwwwkmmmmmyyyyykbbbkwk....",
+          "...kwkwwwwwkmmmmyyyykbbbbbkwk...",
+          "..kwkwwwwwwkmmmmyyyykbbbbbbkwk..",
+          "..kwkkwwwwwwkmmmyyykbbbbbbkkwk..",
+          ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+          ".vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv.",
+          ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+          ".kvvkkwwwwwwwwwwwwwwwwwwwwkkvvk.",
+          "kkvvkkwwkkkkkkkkkkkkkkkkwwkkvvkk",
+          "kkvvkkwwkkkbbbyyyybbbkkkwwkkvvkk",
+          "kkvvkkwwkkkkbyykkyybkkkkwwkkvvkk",
+          "kkvvkkwwkkkbbbyyyybbbkkkwwkkvvkk",
+          ".kvvkkwwkkkkkkkkkkkkkkkkwwkkvvk.",
+          ".kvvkkwwwwwwwwwwwwwwwwwwwwkkvvk.",
+          ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+          ".vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv.",
+          "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+          "..kwkmmmmmmkwwwwbbbbkyyyyyykwk..",
+          "...kwkmmmmmkwwwwbbbbkyyyyykwk...",
+          "....kwkmmmkwwwwwbbbbbkyyykwk....",
+          "....kkwkmkkwwwwwbbbbbkkykwkk....",
+          ".....kkwkkwwwwwwbbbbbbkkwkk.....",
+          ".......kwwkkwwwwbbbbkkwwk.......",
+          "........kkwwwkkkkkkwwwkk........",
+          "..........kkkwwwwwwkkk..........",
+          "..............kkkk.............."
+        ],
+        "palette": {
+          "m": "#e8457c",
+          "y": "#ffe14d",
+          "b": "#7ec8f0",
+          "v": "#7bd34f",
+          "w": "#ffffff",
+          "k": "#141a3a"
+        }
+      },
+      "ads": {
+        "years": [
+          1980,
+          1999
+        ],
+        "exclude": "jpcm|ytchannel1|japan|angels-egg|bandai|anime|adv-films|[\\u3040-\\u30ff\\u4e00-\\u9fff]",
+        "boost": "trailer|preview|coming.?attraction|opening.?to|vhs|theatrical|tv.?spot|movie|feature.?presentation|rental|blockbuster",
+        "boost_weight": 3
+      },
+      "bumps": [
+        {
+          "id": "eit-001",
+          "slides": [
+            {
+              "text": "EVERYTHING IS TERRIBLE!"
+            },
+            {
+              "text": "AN ART COLLECTIVE."
+            },
+            {
+              "text": "WE WATCH THE TAPES"
+            },
+            {
+              "text": "SO YOU DON'T HAVE TO."
+            },
+            {
+              "text": "TOO LATE."
+            }
+          ]
+        },
+        {
+          "id": "eit-002",
+          "slides": [
+            {
+              "text": "EVERY TAPE ON THIS CHANNEL"
+            },
+            {
+              "text": "WAS RESCUED FROM A THRIFT STORE."
+            },
+            {
+              "text": "SOME OF THEM"
+            },
+            {
+              "text": "SHOULD HAVE STAYED THERE."
+            }
+          ]
+        },
+        {
+          "id": "eit-003",
+          "slides": [
+            {
+              "text": "THE EVERYTHING IS TERRIBLE! ARCHIVE"
+            },
+            {
+              "text": "IS NOW 4 FLOORS DEEP."
+            },
+            {
+              "text": "THE BASEMENT HUMS."
+            },
+            {
+              "text": "NOBODY GOES IN THE BASEMENT."
+            }
+          ]
+        },
+        {
+          "id": "eit-004",
+          "slides": [
+            {
+              "text": "OUR MISSION:"
+            },
+            {
+              "text": "TO PRESERVE THE WORST MOMENTS"
+            },
+            {
+              "text": "OF THE VIDEOCASSETTE ERA."
+            },
+            {
+              "text": "MISSION ACCOMPLISHED. REPEATEDLY."
+            }
+          ]
+        },
+        {
+          "id": "eit-005",
+          "slides": [
+            {
+              "text": "THIS PROGRAM WAS ASSEMBLED"
+            },
+            {
+              "text": "BY TRAINED PROFESSIONALS."
+            },
+            {
+              "text": "THEY ARE NOT OKAY."
+            },
+            {
+              "text": "PLEASE SEND SNACKS."
+            }
+          ]
+        },
+        {
+          "id": "eit-006",
+          "slides": [
+            {
+              "text": "EVERYTHING IS TERRIBLE!"
+            },
+            {
+              "text": "IS AN ART COLLECTIVE,"
+            },
+            {
+              "text": "NOT A CRY FOR HELP."
+            },
+            {
+              "text": "(IT IS BOTH.)"
+            }
+          ]
+        },
+        {
+          "id": "eit-007",
+          "slides": [
+            {
+              "text": "ART IS WHATEVER"
+            },
+            {
+              "text": "YOU FIND IN A BOX"
+            },
+            {
+              "text": "MARKED \"MISC TAPES $1\"."
+            }
+          ]
+        },
+        {
+          "id": "eit-008",
+          "slides": [
+            {
+              "text": "WE ACCEPT DONATIONS OF:"
+            },
+            {
+              "text": "WORKOUT TAPES. PUPPET TAPES."
+            },
+            {
+              "text": "CORPORATE TRAINING TAPES."
+            },
+            {
+              "text": "TAPES LABELED \"DO NOT WATCH\"."
+            }
+          ]
+        },
+        {
+          "id": "eit-009",
+          "slides": [
+            {
+              "text": "FUN FACT:"
+            },
+            {
+              "text": "THE VCR WAS INVENTED"
+            },
+            {
+              "text": "SO THAT THIS COULD HAPPEN TO YOU."
+            }
+          ]
+        },
+        {
+          "id": "eit-010",
+          "slides": [
+            {
+              "text": "BE KIND."
+            },
+            {
+              "text": "REWIND."
+            },
+            {
+              "text": "THEN DON'T WATCH IT AGAIN."
+            }
+          ]
+        },
+        {
+          "id": "eit-011",
+          "slides": [
+            {
+              "text": "WE NEED YOUR"
+            },
+            {
+              "text": "JERRY MAGUIRE VHS TAPES."
+            },
+            {
+              "text": "ALL OF THEM."
+            },
+            {
+              "text": "MAIL TO: P.O. BOX 1996, NOWHERE, USA 00000"
+            }
+          ]
+        },
+        {
+          "id": "eit-012",
+          "slides": [
+            {
+              "text": "SHOW US"
+            },
+            {
+              "text": "THE TAPES."
+            },
+            {
+              "text": "P.O. BOX 1996, NOWHERE, USA 00000"
+            }
+          ]
+        },
+        {
+          "id": "eit-013",
+          "slides": [
+            {
+              "text": "YOU HAD US AT HELLO."
+            },
+            {
+              "text": "NOW SEND US"
+            },
+            {
+              "text": "YOUR COPY OF JERRY MAGUIRE."
+            },
+            {
+              "text": "P.O. BOX 1996, NOWHERE, USA 00000"
+            }
+          ]
+        },
+        {
+          "id": "eit-014",
+          "slides": [
+            {
+              "text": "THE JERRY MAGUIRE PYRAMID"
+            },
+            {
+              "text": "IS ALMOST COMPLETE."
+            },
+            {
+              "text": "ONLY 4,000,000 TAPES TO GO."
+            },
+            {
+              "text": "P.O. BOX 1996, NOWHERE, USA 00000"
+            }
+          ]
+        },
+        {
+          "id": "eit-015",
+          "slides": [
+            {
+              "text": "DO YOU OWN JERRY MAGUIRE ON VHS?"
+            },
+            {
+              "text": "OF COURSE YOU DO."
+            },
+            {
+              "text": "EVERYONE DOES."
+            },
+            {
+              "text": "SEND IT TO P.O. BOX 1996, NOWHERE, USA 00000"
+            }
+          ]
+        },
+        {
+          "id": "eit-016",
+          "slides": [
+            {
+              "text": "YOU COMPLETE US."
+            },
+            {
+              "text": "(SPECIFICALLY YOUR"
+            },
+            {
+              "text": "JERRY MAGUIRE VHS TAPE.)"
+            },
+            {
+              "text": "P.O. BOX 1996, NOWHERE, USA 00000"
+            }
+          ]
+        },
+        {
+          "id": "eit-017",
+          "slides": [
+            {
+              "text": "HELP US"
+            },
+            {
+              "text": "HELP YOU"
+            },
+            {
+              "text": "HELP US"
+            },
+            {
+              "text": "COLLECT EVERY JERRY MAGUIRE TAPE ON EARTH."
+            }
+          ]
+        },
+        {
+          "id": "eit-018",
+          "slides": [
+            {
+              "text": "JERRY MAGUIRE TAPES RECEIVED THIS WEEK:"
+            },
+            {
+              "text": "11,402."
+            },
+            {
+              "text": "TAPES WE ACTUALLY NEEDED:"
+            },
+            {
+              "text": "ALL OF THEM. KEEP GOING."
+            }
+          ]
+        },
+        {
+          "id": "eit-019",
+          "slides": [
+            {
+              "text": "CALL NOW!"
+            },
+            {
+              "text": "1-800-555-0123"
+            },
+            {
+              "text": "OPERATORS ARE STANDING BY."
+            },
+            {
+              "text": "THEY HAVE BEEN STANDING SINCE 1987."
+            }
+          ]
+        },
+        {
+          "id": "eit-020",
+          "slides": [
+            {
+              "text": "LONELY? CONFUSED? OWN A VCR?"
+            },
+            {
+              "text": "CALL 1-900-555-0187"
+            },
+            {
+              "text": "$3.99 THE FIRST MINUTE."
+            },
+            {
+              "text": "YOUR SOUL EACH ADDITIONAL MINUTE."
+            }
+          ]
+        },
+        {
+          "id": "eit-021",
+          "slides": [
+            {
+              "text": "CALL 1-800-555-0144"
+            },
+            {
+              "text": "TO HEAR A TAPE"
+            },
+            {
+              "text": "BEING REWOUND."
+            },
+            {
+              "text": "24 HOURS A DAY."
+            }
+          ]
+        },
+        {
+          "id": "eit-022",
+          "slides": [
+            {
+              "text": "KIDS!"
+            },
+            {
+              "text": "ASK YOUR PARENTS' PERMISSION"
+            },
+            {
+              "text": "BEFORE CALLING 1-800-555-0162."
+            },
+            {
+              "text": "THEN CALL ANYWAY."
+            }
+          ]
+        },
+        {
+          "id": "eit-023",
+          "slides": [
+            {
+              "text": "WANT THESE TAPES"
+            },
+            {
+              "text": "IN YOUR HOME?"
+            },
+            {
+              "text": "CALL 1-800-555-0110."
+            },
+            {
+              "text": "WE WILL NOT ANSWER."
+            }
+          ]
+        },
+        {
+          "id": "eit-024",
+          "slides": [
+            {
+              "text": "THIS IS NOT A TEST."
+            },
+            {
+              "text": "CALL 1-800-555-0199 NOW."
+            },
+            {
+              "text": "THIS IS A TEST."
+            }
+          ]
+        },
+        {
+          "id": "eit-025",
+          "slides": [
+            {
+              "text": "ACT NOW"
+            },
+            {
+              "text": "AND RECEIVE A SECOND TAPE"
+            },
+            {
+              "text": "ABSOLUTELY FREE."
+            },
+            {
+              "text": "WE CAN'T STOP YOU. CALL 1-800-555-0177."
+            }
+          ]
+        },
+        {
+          "id": "eit-026",
+          "slides": [
+            {
+              "text": "OPERATORS ARE STANDING BY."
+            },
+            {
+              "text": "OPERATORS ARE STANDING BY."
+            },
+            {
+              "text": "OPERATORS ARE STANDING BY."
+            },
+            {
+              "text": "1-800-555-0131"
+            }
+          ]
+        },
+        {
+          "id": "eit-027",
+          "slides": [
+            {
+              "text": "HAS A VIDEOTAPE"
+            },
+            {
+              "text": "CHANGED YOUR LIFE?"
+            },
+            {
+              "text": "CALL OUR HOTLINE: 1-800-555-0158"
+            },
+            {
+              "text": "WE'RE SO SORRY."
+            }
+          ]
+        },
+        {
+          "id": "eit-028",
+          "slides": [
+            {
+              "text": "NOT AVAILABLE IN STORES."
+            },
+            {
+              "text": "NOT AVAILABLE ANYWHERE."
+            },
+            {
+              "text": "CALL 1-800-555-0116 ANYWAY."
+            }
+          ]
+        }
+      ],
+      "network_bumps": [
+        {
+          "id": "eitn-001",
+          "slides": [
+            {
+              "text": "YOU ARE WATCHING"
+            },
+            {
+              "text": "EISTV."
+            },
+            {
+              "text": "IT GETS WORSE."
+            }
+          ]
+        },
+        {
+          "id": "eitn-002",
+          "slides": [
+            {
+              "text": "STAY TUNED."
+            },
+            {
+              "text": "OR DON'T."
+            },
+            {
+              "text": "THE TAPE KEEPS PLAYING EITHER WAY."
+            }
+          ]
+        },
+        {
+          "id": "eitn-003",
+          "slides": [
+            {
+              "text": "NOW BACK TO"
+            },
+            {
+              "text": "OUR REGULARLY UNSCHEDULED"
+            },
+            {
+              "text": "PROGRAMMING."
+            }
+          ]
+        },
+        {
+          "id": "eitn-004",
+          "slides": [
+            {
+              "text": "EISTV."
+            },
+            {
+              "text": "CHANNEL 301."
+            },
+            {
+              "text": "WE'RE SORRY."
+            }
+          ]
+        },
+        {
+          "id": "eitn-005",
+          "slides": [
+            {
+              "text": "THE PRECEDING"
+            },
+            {
+              "text": "WAS A REAL THING"
+            },
+            {
+              "text": "REAL PEOPLE MADE."
+            }
+          ]
+        },
+        {
+          "id": "eitn-006",
+          "slides": [
+            {
+              "text": "PLEASE ADJUST YOUR TRACKING."
+            },
+            {
+              "text": "IT WON'T HELP."
+            },
+            {
+              "text": "BUT PLEASE."
+            }
+          ]
+        },
+        {
+          "id": "eitn-007",
+          "slides": [
+            {
+              "text": "THANK YOU FOR NOT"
+            },
+            {
+              "text": "TURNING OFF YOUR TELEVISION."
+            }
+          ]
+        },
+        {
+          "id": "eitn-008",
+          "slides": [
+            {
+              "text": "REMEMBER:"
+            },
+            {
+              "text": "P.O. BOX 1996"
+            },
+            {
+              "text": "NOWHERE, USA 00000"
+            },
+            {
+              "text": "JERRY MAGUIRE TAPES ONLY."
+            }
+          ]
+        },
+        {
+          "id": "eitn-009",
+          "slides": [
+            {
+              "text": "CALL 1-800-555-0123"
+            },
+            {
+              "text": "IF YOU'VE SEEN THIS TAPE BEFORE."
+            },
+            {
+              "text": "YOU HAVE NOW."
+            }
+          ]
+        },
+        {
+          "id": "eitn-010",
+          "slides": [
+            {
+              "text": "EISTV."
+            },
+            {
+              "text": "BROADCASTING FROM"
+            },
+            {
+              "text": "THE BOTTOM OF THE BARGAIN BIN."
+            }
+          ]
+        },
+        {
+          "id": "eitn-011",
+          "slides": [
+            {
+              "text": "BACK IN A MINUTE."
+            },
+            {
+              "text": "PLEASE DO NOT TOUCH THE DIAL."
+            },
+            {
+              "text": "IT IS STICKY."
+            }
+          ]
+        },
+        {
+          "id": "eitn-012",
+          "slides": [
+            {
+              "text": "THIS STATION IS"
+            },
+            {
+              "text": "100% MAGNETIC TAPE."
+            },
+            {
+              "text": "NO PRESERVATIVES."
+            }
+          ]
+        },
+        {
+          "id": "eitn-013",
+          "slides": [
+            {
+              "text": "EISTV"
+            },
+            {
+              "text": "THE ALL-SEEING TAPE"
+            },
+            {
+              "text": "SEES YOU TOO."
+            }
+          ]
+        },
+        {
+          "id": "eitn-013",
+          "slides": [
+            {
+              "text": "EISTV"
+            },
+            {
+              "text": "THE ALL-SEEING TAPE"
+            },
+            {
+              "text": "SEES YOU TOO."
+            }
+          ]
+        },
+        {
+          "id": "eitn-013",
+          "slides": [
+            {
+              "text": "EISTV"
+            },
+            {
+              "text": "THE ALL-SEEING TAPE"
+            },
+            {
+              "text": "SEES YOU TOO."
+            }
+          ]
+        }
+      ],
+      "music": [
+        {
+          "file": "music/kevin-macleod-eighties-action.mp3",
+          "title": "Eighties Action",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-metalmania.mp3",
+          "title": "Metalmania",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-summon-the-rawk.mp3",
+          "title": "Summon the Rawk",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-monster-promenade.mp3",
+          "title": "Monster Promenade",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-graveyard-shift.mp3",
+          "title": "Graveyard Shift",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-cut-and-run.mp3",
+          "title": "Cut and Run",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-volatile-reaction.mp3",
+          "title": "Volatile Reaction",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-sneaky-snitch.mp3",
+          "title": "Sneaky Snitch",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/lazerhawk-escape-from-germany.mp3",
+          "title": "Escape From Germany",
+          "artist": "Lazerhawk",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/irving-force-back-alley-creepers.mp3",
+          "title": "Back Alley Creepers",
+          "artist": "Irving Force",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/gunship-pink-mist.mp3",
+          "title": "Pink Mist",
+          "artist": "GUNSHIP",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/vhs-glitch-he-sees-you.mp3",
+          "title": "He Sees You",
+          "artist": "VHS Glitch",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/airglow-electrifying-landscape.mp3",
+          "title": "Electrifying Landscape",
+          "artist": "AIRGLOW",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/airglow-memory-bank.mp3",
+          "title": "Memory Bank",
+          "artist": "AIRGLOW",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/timecrawler-82-driving-in-the-rain.mp3",
+          "title": "Driving in the Rain",
+          "artist": "Timecrawler 82",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/timecrawler-82-street-dancing.mp3",
+          "title": "Street Dancing",
+          "artist": "Timecrawler 82",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/telematix-last-train-to-nowhere.mp3",
+          "title": "Last Train To Nowhere",
+          "artist": "Telematix",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/telematix-flashback.mp3",
+          "title": "Flashback",
+          "artist": "Telematix",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/mach-man-mini-cool-runningz.mp3",
+          "title": "Cool Runningz",
+          "artist": "Mach-Man Mini",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/rolemusic-the-great-madeja.mp3",
+          "title": "The Great Madeja",
+          "artist": "rolemusic",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        }
+      ],
+      "network_music": [
+        {
+          "file": "music/kevin-macleod-local-forecast-elevator.mp3",
+          "title": "Local Forecast - Elevator",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-local-forecast.mp3",
+          "title": "Local Forecast",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-on-hold-for-you.mp3",
+          "title": "On Hold for You",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-presenterator.mp3",
+          "title": "Presenterator",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-leopard-print-elevator.mp3",
+          "title": "Leopard Print Elevator",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-funkorama.mp3",
+          "title": "Funkorama",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-monkeys-spinning-monkeys.mp3",
+          "title": "Monkeys Spinning Monkeys",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/kevin-macleod-disco-lounge.mp3",
+          "title": "Disco Lounge",
+          "artist": "Kevin MacLeod",
+          "source": "incompetech.com",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/2003-toyota-corolla-2003-toyota-corolla.mp3",
+          "title": "2003 Toyota Corolla",
+          "artist": "2003 Toyota Corolla",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/2003-toyota-corolla-2004-toyota-corolla.mp3",
+          "title": "2004 Toyota Corolla",
+          "artist": "2003 Toyota Corolla",
+          "source": "archive.org",
+          "license": "by-sa",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/ilikestapler-dilbert-2.mp3",
+          "title": "dilbert 2",
+          "artist": "ILikeStapler",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/juice-plus-how-many-ohms-you-got.mp3",
+          "title": "how many ohms you got",
+          "artist": "JUICE PLUS",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/thought-pyramid-endless.mp3",
+          "title": "Endless",
+          "artist": "Thought Pyramid",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "2.0"
+        },
+        {
+          "file": "music/thought-pyramid-morning-cup.mp3",
+          "title": "Morning Cup",
+          "artist": "Thought Pyramid",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "2.0"
+        },
+        {
+          "file": "music/dr-tuxedo-electric-blue.mp3",
+          "title": "Electric Blue",
+          "artist": "Dr. Tuxedo",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/dr-tuxedo-groove-factory.mp3",
+          "title": "Groove Factory",
+          "artist": "Dr. Tuxedo",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/deadman-digi-hartatak-elevatored.mp3",
+          "title": "Elevatored",
+          "artist": "Deadman & Digi Hartatak",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "3.0"
+        },
+        {
+          "file": "music/mach-man-mini-please-hold.mp3",
+          "title": "Please Hold",
+          "artist": "Mach-Man Mini",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "4.0"
+        },
+        {
+          "file": "music/thought-pyramid-quad-cities.mp3",
+          "title": "Quad Cities",
+          "artist": "Thought Pyramid",
+          "source": "archive.org",
+          "license": "by",
+          "license_version": "2.0"
+        }
+      ]
+    }
+  ]
+}
