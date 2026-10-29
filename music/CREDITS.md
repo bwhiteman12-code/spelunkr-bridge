@@ -1,6 +1,6 @@
 # Music credits
 
-The music beds under the bump cards on the custom channels. All of them are Creative Commons licensed, and the bridge credits each one on screen while it plays.
+The music beds under the bump cards on the example channels. All of them are Creative Commons licensed, and the bridge credits each one on screen while it plays. The example channels also use tracks from Spelunkr's own library; those stream from Spelunkr's server and aren't included here.
 
 | File | Title | Artist | License | Source |
 |---|---|---|---|---|
@@ -18,17 +18,13 @@ The music beds under the bump cards on the custom channels. All of them are Crea
 | kevin-macleod-cut-and-run.mp3 | Cut and Run | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-disco-lounge.mp3 | Disco Lounge | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-eighties-action.mp3 | Eighties Action | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
-| kevin-macleod-funkorama.mp3 | Funkorama | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-graveyard-shift.mp3 | Graveyard Shift | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-leopard-print-elevator.mp3 | Leopard Print Elevator | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-local-forecast-elevator.mp3 | Local Forecast - Elevator | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-local-forecast.mp3 | Local Forecast | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
-| kevin-macleod-metalmania.mp3 | Metalmania | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-monster-promenade.mp3 | Monster Promenade | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-on-hold-for-you.mp3 | On Hold for You | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-presenterator.mp3 | Presenterator | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
-| kevin-macleod-sneaky-snitch.mp3 | Sneaky Snitch | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
-| kevin-macleod-summon-the-rawk.mp3 | Summon the Rawk | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | kevin-macleod-volatile-reaction.mp3 | Volatile Reaction | Kevin MacLeod | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | incompetech.com |
 | lazerhawk-escape-from-germany.mp3 | Escape From Germany | Lazerhawk | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) | archive.org |
 | mach-man-mini-cool-runningz.mp3 | Cool Runningz | Mach-Man Mini | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | archive.org |

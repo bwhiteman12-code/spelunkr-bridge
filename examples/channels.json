@@ -1092,22 +1092,6 @@
           "license_version": "4.0"
         },
         {
-          "file": "music/kevin-macleod-metalmania.mp3",
-          "title": "Metalmania",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
-          "file": "music/kevin-macleod-summon-the-rawk.mp3",
-          "title": "Summon the Rawk",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
           "file": "music/kevin-macleod-monster-promenade.mp3",
           "title": "Monster Promenade",
           "artist": "Kevin MacLeod",
@@ -1134,14 +1118,6 @@
         {
           "file": "music/kevin-macleod-volatile-reaction.mp3",
           "title": "Volatile Reaction",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
-          "file": "music/kevin-macleod-sneaky-snitch.mp3",
-          "title": "Sneaky Snitch",
           "artist": "Kevin MacLeod",
           "source": "incompetech.com",
           "license": "by",
@@ -1242,6 +1218,60 @@
           "source": "archive.org",
           "license": "by",
           "license_version": "4.0"
+        },
+        {
+          "filename": "kevin-macleod-ready-aim-fire.mp3",
+          "title": "Ready Aim Fire",
+          "artist": "Kevin MacLeod",
+          "license": "by"
+        },
+        {
+          "filename": "shane-ivers-sports-fm.mp3",
+          "title": "Sports FM",
+          "artist": "Shane Ivers",
+          "license": "by"
+        },
+        {
+          "filename": "shane-ivers-hard-sell-hotel.mp3",
+          "title": "Hard Sell Hotel",
+          "artist": "Shane Ivers",
+          "license": "by"
+        },
+        {
+          "filename": "shane-ivers-apple-for-the-preacher.mp3",
+          "title": "Apple For The Preacher",
+          "artist": "Shane Ivers",
+          "license": "by"
+        },
+        {
+          "filename": "nathan-hall-cyber-world.mp3",
+          "title": "Cyber World",
+          "artist": "Nathan Hall",
+          "license": "by"
+        },
+        {
+          "filename": "nathan-hall-uber-incursion.mp3",
+          "title": "Uber Incursion",
+          "artist": "Nathan Hall",
+          "license": "by"
+        },
+        {
+          "filename": "the-kyoto-connection-wake-up-2016-tech-noir.mp3",
+          "title": "Wake Up (2016 Tech noir)",
+          "artist": "The Kyoto Connection",
+          "license": "by"
+        },
+        {
+          "filename": "stickster-hyperdrive-cruise.mp3",
+          "title": "Hyperdrive Cruise",
+          "artist": "Stickster",
+          "license": "by-sa"
+        },
+        {
+          "filename": "loyalty-freak-music-ghost-surf-rock.mp3",
+          "title": "Ghost Surf Rock",
+          "artist": "Loyalty Freak Music",
+          "license": "by"
         }
       ],
       "network_music": [
@@ -1280,14 +1310,6 @@
         {
           "file": "music/kevin-macleod-leopard-print-elevator.mp3",
           "title": "Leopard Print Elevator",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
-          "file": "music/kevin-macleod-funkorama.mp3",
-          "title": "Funkorama",
           "artist": "Kevin MacLeod",
           "source": "incompetech.com",
           "license": "by",
@@ -1388,6 +1410,30 @@
           "source": "archive.org",
           "license": "by",
           "license_version": "2.0"
+        },
+        {
+          "filename": "boguscollective-magic-touch.mp3",
+          "title": "Magic Touch",
+          "artist": "Boguscollective",
+          "license": "by"
+        },
+        {
+          "filename": "astromegamusic-the-mec-monroe-freestyle-flip.mp3",
+          "title": "The Mec Monroe Freestyle Flip",
+          "artist": "Astromegamusic",
+          "license": "by"
+        },
+        {
+          "filename": "astromegamusic-kyahs-jazzz.mp3",
+          "title": "Kyahs Jazzz",
+          "artist": "Astromegamusic",
+          "license": "by"
+        },
+        {
+          "filename": "bvftg-1993-toyota-corolla.mp3",
+          "title": "1993 Toyota Corolla",
+          "artist": "Bvftg",
+          "license": "by"
         }
       ],
       "card_seconds": 20,
@@ -2411,22 +2457,6 @@
           "license_version": "4.0"
         },
         {
-          "file": "music/kevin-macleod-metalmania.mp3",
-          "title": "Metalmania",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
-          "file": "music/kevin-macleod-summon-the-rawk.mp3",
-          "title": "Summon the Rawk",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
           "file": "music/kevin-macleod-monster-promenade.mp3",
           "title": "Monster Promenade",
           "artist": "Kevin MacLeod",
@@ -2453,14 +2483,6 @@
         {
           "file": "music/kevin-macleod-volatile-reaction.mp3",
           "title": "Volatile Reaction",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
-          "file": "music/kevin-macleod-sneaky-snitch.mp3",
-          "title": "Sneaky Snitch",
           "artist": "Kevin MacLeod",
           "source": "incompetech.com",
           "license": "by",
@@ -2561,6 +2583,60 @@
           "source": "archive.org",
           "license": "by",
           "license_version": "4.0"
+        },
+        {
+          "filename": "kevin-macleod-motivator.mp3",
+          "title": "Motivator",
+          "artist": "Kevin MacLeod",
+          "license": "by"
+        },
+        {
+          "filename": "f-u-t-u-r-e-shopping-bonanza.mp3",
+          "title": "Shopping Bonanza",
+          "artist": "F u t u r e",
+          "license": "by-sa"
+        },
+        {
+          "filename": "f-u-t-u-r-e-corporate-manager-expo-lounge.mp3",
+          "title": "Corporate Manager Expo Lounge",
+          "artist": "F u t u r e",
+          "license": "by-sa"
+        },
+        {
+          "filename": "roboctopus-all-outta-bubblegum.mp3",
+          "title": "All Outta Bubblegum",
+          "artist": "roboctopus",
+          "license": "by-sa"
+        },
+        {
+          "filename": "roboctopus-last-flight-of-the-camcorder.mp3",
+          "title": "Last Flight of the Camcorder",
+          "artist": "roboctopus",
+          "license": "by-sa"
+        },
+        {
+          "filename": "kevin-macleod-hep-cats.mp3",
+          "title": "Hep Cats",
+          "artist": "Kevin MacLeod",
+          "license": "by"
+        },
+        {
+          "filename": "wheatleyyrahcaz-w-we-present-a-special-presentation-you-will-see-such-pretty-things.mp3",
+          "title": "W We Present A Special Presentation You Will See Such Pretty Things",
+          "artist": "Wheatleyyrahcaz",
+          "license": "by"
+        },
+        {
+          "filename": "chezmonplaisir-you-are-in-good-hands.mp3",
+          "title": "You Are In Good Hands",
+          "artist": "Chezmonplaisir",
+          "license": "by"
+        },
+        {
+          "filename": "digi-hartatak-elevator-music.mp3",
+          "title": "Elevator Music",
+          "artist": "Digi Hartatak",
+          "license": "by"
         }
       ],
       "network_music": [
@@ -2599,14 +2675,6 @@
         {
           "file": "music/kevin-macleod-leopard-print-elevator.mp3",
           "title": "Leopard Print Elevator",
-          "artist": "Kevin MacLeod",
-          "source": "incompetech.com",
-          "license": "by",
-          "license_version": "4.0"
-        },
-        {
-          "file": "music/kevin-macleod-funkorama.mp3",
-          "title": "Funkorama",
           "artist": "Kevin MacLeod",
           "source": "incompetech.com",
           "license": "by",
@@ -2707,6 +2775,30 @@
           "source": "archive.org",
           "license": "by",
           "license_version": "2.0"
+        },
+        {
+          "filename": "boguscollective-magic-touch.mp3",
+          "title": "Magic Touch",
+          "artist": "Boguscollective",
+          "license": "by"
+        },
+        {
+          "filename": "astromegamusic-the-mec-monroe-freestyle-flip.mp3",
+          "title": "The Mec Monroe Freestyle Flip",
+          "artist": "Astromegamusic",
+          "license": "by"
+        },
+        {
+          "filename": "astromegamusic-kyahs-jazzz.mp3",
+          "title": "Kyahs Jazzz",
+          "artist": "Astromegamusic",
+          "license": "by"
+        },
+        {
+          "filename": "bvftg-1993-toyota-corolla.mp3",
+          "title": "1993 Toyota Corolla",
+          "artist": "Bvftg",
+          "license": "by"
         }
       ]
     }
