@@ -11,6 +11,7 @@
   <Overview>Turns the retro channels on spelunkr.tv into live TV with a full guide for Jellyfin, and lets you add your own channels built from YouTube playlists. In Jellyfin add an M3U Tuner with http://YOUR-SERVER-IP:8765/playlist.m3u and an XMLTV guide with http://YOUR-SERVER-IP:8765/epg.xml. A fan project, not affiliated with spelunkr.tv.</Overview>
   <Category>MediaServer:Video</Category>
   <WebUI>http://[IP]:[PORT:8765]/</WebUI>
+  <Icon>https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/assets/icon.png</Icon>
   <TemplateURL>https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/unraid/spelunkr-bridge.xml</TemplateURL>
   <ExtraParams/>
   <PostArgs/>

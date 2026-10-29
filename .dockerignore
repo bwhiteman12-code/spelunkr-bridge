@@ -8,3 +8,4 @@ __pycache__
 *.ps1
 unraid
 docker-compose.yml
+assets

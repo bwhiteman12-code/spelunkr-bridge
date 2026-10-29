@@ -1,3 +1,5 @@
+<img src="assets/icon.png" alt="" width="96" align="right">
+
 # Spelunkr → Jellyfin Live TV
 
 Turns the 30 channels on [spelunkr.tv](https://spelunkr.tv/) into live TV channels with a full TV guide in Jellyfin. The channels run in sync with the website: the same show, bump card and commercial plays at the same moment as on spelunkr.tv.
@@ -157,6 +159,7 @@ Per channel:
 Under `"youtube"`:
 - `"playlist"` (one show) or `"shows"`: a list of `{"name", "playlists", "order"}`. `order` is `"oldest-first"` or the playlist's own order.
 - `"breaks": "sponsorblock"` also puts commercial breaks mid-episode, where SponsorBlock users marked segment changes.
+- `"skip"`: videos to leave out, as video ids or YouTube links, e.g. `["vcBkm1nOI5k", "https://www.youtube.com/watch?v=JkWk_chVcJk"]`. The example channels use it for videos YouTube age-restricts, so the guide is right from the first start. The bridge still finds new unplayable videos on its own and drops them. To see what it found, check `cache/custom__unplayable.json`; those videos are good candidates for your list.
 - `"unique": true` airs each video once.
 - `"min_show_minutes"` (default 10) sets the size below which a playlist folds into a bigger one.
 - `"block_minutes"` groups short clips into blocks.

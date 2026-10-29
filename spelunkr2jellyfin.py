@@ -950,7 +950,13 @@ class Catalog:
         spread evenly through the rotation like a TV schedule, and multi-part uploads stay together."""
         cid, yt = ch["id"], ch["youtube"]
         shows = yt.get("shows") or [{"name": ch.get("name"), "playlists": [yt["playlist"]], "order": yt.get("order")}]
-        bad = self._load_unplayable()
+        # videos to leave out: ones found unplayable, plus the channel's own "skip" list
+        # (video ids or YouTube links), e.g. known age-restricted uploads or ones you just don't want
+        bad = set(self._load_unplayable())
+        for s in yt.get("skip") or []:
+            m = re.search(r"(?:v=|youtu\.be/|shorts/|^)([A-Za-z0-9_-]{11})(?:$|[?&#/])", str(s).strip())
+            if m:
+                bad.add(m.group(1))
         urls = [pl if isinstance(pl, str) else pl["url"] for show in shows for pl in show["playlists"]]
         if len(urls) > 3:                        # big lineups: read the playlists 6 at a time
             from concurrent.futures import ThreadPoolExecutor
