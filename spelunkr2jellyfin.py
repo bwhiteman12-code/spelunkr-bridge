@@ -1714,13 +1714,12 @@ class Streamer:
                 "colorbalance=rs=0.01:bs=0.01:rm=0.02:bm=-0.02,"
                 "noise=c0s=10:c0f=t+u:c1s=5:c1f=t:c2s=5:c2f=t,"                         # tape grain
                 "split[vh_a][vh_b];"
-                "[vh_b]crop=w=iw-14:h=%d:x=0:y=ih-%d,noise=c0s=45:c0f=t[vh_c];"         # head-switching strip
-                "[vh_a]drawbox=x=0:y=ih-%d:w=14:h=%d:color=black:t=fill[vh_d];"
-                "[vh_d][vh_c]overlay=x=14:y=H-%d,split[vh_e][vh_f];"
+                "[vh_b]crop=w=iw:h=%d:x=0:y=ih-%d,noise=c0s=45:c0f=t[vh_c];"            # head-switching noise
+                "[vh_a][vh_c]overlay=x=0:y=H-%d,split[vh_e][vh_f];"                     # (kept square)
                 "[vh_f]crop=w=iw-10:h=%d:x=0:y='mod(t*120,ih-%d)',noise=c0s=60:c0f=t,"  # tracking glitch band
                 "eq=brightness=0.08[vh_g];"
                 "[vh_e][vh_g]overlay=x=10:y='mod(t*120,H-%d)':enable='lt(mod(t,41),0.8)'[%s]"
-                % (src, w * 3 // 5, h, w, h, band, band, band, band, band, band * 3, band * 3, band * 3, dst))
+                % (src, w * 3 // 5, h, w, h, band, band, band, band * 3, band * 3, band * 3, dst))
 
     # -- helpers ----------------------------------------------------------------
 
