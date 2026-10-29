@@ -1,0 +1,10 @@
+.git
+.github
+cache
+__pycache__
+*.zip
+*.log
+*.bat
+*.ps1
+unraid
+docker-compose.yml

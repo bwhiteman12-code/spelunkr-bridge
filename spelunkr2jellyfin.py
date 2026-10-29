@@ -1182,7 +1182,9 @@ class Catalog:
         def track(t):
             t = dict(t)
             if t.get("file") and not os.path.isabs(t["file"]):
-                t["file"] = os.path.join(here, t["file"])
+                # next to channels.json, else next to the script (the bundled music folder)
+                cands = [os.path.join(d, t["file"]) for d in (here, os.path.dirname(os.path.abspath(__file__)))]
+                t["file"] = next((p for p in cands if os.path.exists(p)), cands[0])
             return t
         pool = self._ad_pool(ch["ads"]) if ch.get("ads") else []
         cfg_key = json.dumps(ch, sort_keys=True) + str(len(pool))

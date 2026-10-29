@@ -1,14 +1,13 @@
-# Spelunkr -> Jellyfin bridge for Unraid (or any Docker host).
-# 1. Copy spelunkr2jellyfin.py, the two star4000 .ttf fonts, channels.json and the music folder
-#    into /mnt/user/appdata/spelunkr/
-# 2. Change PUBLIC_URL to your server's LAN IP, TZ to your timezone, and GPU to the render node
-#    Jellyfin uses for Quick Sync (Dashboard > Playback > Transcoding > QSV Device)
-# 3. docker compose up -d   (or use the Compose Manager plugin)
-# The Intel media driver packages are for GPU encoding; if they can't be installed the bridge
-# simply encodes on the CPU. nodejs + yt-dlp are for the YouTube-based custom channels.
+# Spelunkr Bridge for Unraid (Compose Manager plugin) or any Docker host.
+# 1. Change PUBLIC_URL to this server's LAN IP and TZ to your timezone.
+# 2. For GPU encoding (Intel Quick Sync / VAAPI) keep the /dev/dri device. Set GPU to the render
+#    node Jellyfin uses (Dashboard > Playback > Transcoding > QSV Device), or leave it empty to try each.
+#    No Intel GPU? Delete the "devices" lines; it encodes on the CPU.
+# 3. docker compose up -d
+# To use your own channel list, put a channels.json in the /config folder and restart.
 services:
   spelunkr:
-    image: python:3.12-alpine
+    image: ghcr.io/bwhiteman12-code/spelunkr-bridge:latest
     container_name: spelunkr
     restart: unless-stopped
     ports:
@@ -16,15 +15,9 @@ services:
     devices:
       - /dev/dri:/dev/dri
     volumes:
-      - /mnt/user/appdata/spelunkr:/app
+      - /mnt/user/appdata/spelunkr:/config
     environment:
       - TZ=America/Chicago
       - PUBLIC_URL=http://192.168.1.10:8765
-      - GPU=/dev/dri/renderD129
-    command: >
-      sh -c "apk add --no-cache ffmpeg font-dejavu tzdata nodejs >/dev/null &&
-             (apk add --no-cache intel-media-driver libvpl-gpu-rt >/dev/null 2>&1 ||
-              apk add --no-cache intel-media-driver onevpl-intel-gpu >/dev/null 2>&1 ||
-              apk add --no-cache intel-media-driver >/dev/null 2>&1 || true) &&
-             pip install --no-cache-dir -q -U yt-dlp &&
-             exec python -u /app/spelunkr2jellyfin.py --port 8765 --public-url $$PUBLIC_URL --gpu-device $$GPU"
+      - GPU=
+      - EXTRA_ARGS=

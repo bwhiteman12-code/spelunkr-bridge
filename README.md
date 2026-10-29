@@ -15,7 +15,14 @@ Turns the 30 channels on [spelunkr.tv](https://spelunkr.tv/) into live TV channe
 
 Details: [Setup on Windows](#setup-on-windows-jellyfin-on-your-own-pc).
 
-**Unraid / Docker:** see [Setup on Unraid](#setup-on-unraid) and [Adding it to Jellyfin](#adding-it-to-jellyfin).
+**Unraid / Docker:**
+1. Run the image `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`:
+   - publish port 8765
+   - mount a folder at `/config`
+   - set `PUBLIC_URL=http://YOUR-SERVER-IP:8765`
+
+   Unraid users can install it from the template in this repo; see [Setup on Unraid / Docker](#setup-on-unraid--docker).
+2. In Jellyfin, add an **M3U Tuner** with `http://YOUR-SERVER-IP:8765/playlist.m3u` and an **XMLTV** guide with `http://YOUR-SERVER-IP:8765/epg.xml`. Then click **Refresh Guide Data**.
 
 *A fan project, not affiliated with spelunkr.tv, Everything Is Terrible! or RedLetterMedia.*
 
@@ -102,27 +109,49 @@ Edits take effect at the next lineup refresh (every 30 minutes) or on restart.
 
 The first start after adding EISTV takes about 2 extra minutes while it reads the 43 playlists. After that, episode descriptions are fetched in the background, which also finds and drops any age-restricted clips.
 
-YouTube channels need `yt-dlp` and `nodejs` in the container (see the Post Arguments below). The container updates yt-dlp at every start, which matters because YouTube changes often and old versions stop working. Note: streaming YouTube this way isn't permitted by YouTube's terms. It's fine for home tinkering, but keep it personal.
+The YouTube channels use `yt-dlp` and Node.js; the Docker image and the Windows installer both include them. The container updates yt-dlp at every start, which matters because YouTube changes often and old versions stop working. Note: streaming YouTube this way isn't permitted by YouTube's terms. It's fine for home tinkering, but keep it personal.
 
-## Setup on Unraid
+## Setup on Unraid / Docker
 
-The bridge runs in its own small container based on the stock `python:3.12-alpine` image, which installs ffmpeg and a font when it starts. You don't need to build an image.
+There's a ready-made image, `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, built from this repo for both x86 and ARM. It already contains ffmpeg, yt-dlp, Node.js, the Intel GPU drivers, the fonts, the music and the custom channels.
 
-1. Copy `spelunkr2jellyfin.py`, `star4000.ttf`, `star4000-large.ttf`, `channels.json` and the `music` folder to `/mnt/user/appdata/spelunkr/`.
-2. Create the container. Either:
-   - **Compose Manager plugin:** paste in `docker-compose.yml`, set `PUBLIC_URL` and `TZ`, then click Compose Up. **Or**
-   - **Docker tab → Add Container:**
-     - Repository: `python:3.12-alpine`, Network: `Bridge`
-     - Click **Show more settings** and set **Post Arguments** to:
-       ```
-       sh -c "apk add --no-cache ffmpeg font-dejavu tzdata nodejs && (apk add --no-cache intel-media-driver libvpl-gpu-rt || apk add --no-cache intel-media-driver onevpl-intel-gpu || apk add --no-cache intel-media-driver || true) && pip install --no-cache-dir -q -U yt-dlp && exec python -u /app/spelunkr2jellyfin.py --public-url http://YOUR-UNRAID-IP:8765 --gpu-device /dev/dri/renderD129"
-       ```
-     - For GPU encoding, add a **Device**: `/dev/dri` (the same one your Jellyfin container has). Set `--gpu-device` to the render node in Jellyfin's Dashboard → Playback → Transcoding → QSV Device.
-     - Add a Path: `/app` → `/mnt/user/appdata/spelunkr/`
-     - Add a Port: `8765` → `8765`
-3. Check the container's log for `lineup loaded: 30 channels`, then open `http://YOUR-UNRAID-IP:8765/`.
+**Unraid, with the template:**
+1. Docker tab → **Template repositories** (at the bottom of the page). Add `https://github.com/bwhiteman12-code/spelunkr-bridge` and click Save.
+2. **Add Container** → Template → pick **spelunkr-bridge**.
+3. Set **Public URL** to `http://YOUR-UNRAID-IP:8765`.
+4. **Intel GPU:** keep the `/dev/dri` device and set **GPU render node** to the one Jellyfin uses (Dashboard → Playback → Transcoding → QSV Device). No Intel GPU? Remove the device and it uses the CPU.
+5. Apply. Check the log for `lineup loaded`, then open `http://YOUR-UNRAID-IP:8765/`.
 
-**Updating to a new version of the script:** copy the new `spelunkr2jellyfin.py` over the old one, update Post Arguments if the new version needs it, and restart the container.
+**Unraid by hand:** Docker tab → Add Container with these settings:
+- Repository: `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`, Network: Bridge
+- Port: `8765` → `8765`
+- Path: `/config` → `/mnt/user/appdata/spelunkr`
+- Variable `PUBLIC_URL`: `http://YOUR-UNRAID-IP:8765`
+- Optional: Device `/dev/dri` and Variable `GPU`: `/dev/dri/renderD128`
+
+**Compose (Compose Manager plugin or any Docker host):** use [`docker-compose.yml`](docker-compose.yml). Set `PUBLIC_URL` and `TZ`, then run `docker compose up -d`.
+
+**Settings:**
+
+| Variable | What it does |
+|---|---|
+| `PUBLIC_URL` | How Jellyfin reaches the container, e.g. `http://192.168.1.20:8765` |
+| `GPU` | GPU render node, e.g. `/dev/dri/renderD128`. Empty tries each one. |
+| `EXTRA_ARGS` | Any other [options](#options), e.g. `--skip vacation-slides --no-vhs-cards` |
+| `UPDATE_YTDLP` | `true` (default) updates yt-dlp at every start |
+| `TZ` | Your timezone, e.g. `America/Chicago` (Unraid sets this itself) |
+
+The `/config` folder holds the saved schedules. To change the custom channels, copy [`channels.json`](channels.json) into `/config`, edit it, and restart. Music paths like `music/...` still find the built-in music; to use your own, put a `music` folder in `/config`.
+
+**Updating:** Docker tab → **Check for Updates** → apply, or `docker compose pull && docker compose up -d`.
+
+**Moving from the old `python:3.12-alpine` + Post Arguments setup:**
+1. Change the Repository to the image above.
+2. Clear Post Arguments.
+3. Change the container path `/app` to `/config`, keeping the same appdata folder.
+4. Add `PUBLIC_URL` and `GPU` as variables.
+
+Your existing `channels.json`, music and saved schedules carry over.
 
 ## Setup on Windows (Jellyfin on your own PC)
 
