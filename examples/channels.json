@@ -47,6 +47,21 @@
               }
             ]
           }
+        ],
+        "skip": [
+          "vcBkm1nOI5k",
+          "JkWk_chVcJk",
+          "o4HOlhADlZo",
+          "x94zXO02VPU",
+          "OkEdyq3UE5M",
+          "kWKlmbTudD8",
+          "-zphhfHon_I",
+          "WHiceVim9Wg",
+          "RXrzuqElB2U",
+          "5jPtkjxU5jg",
+          "XNY6HlDKLgk",
+          "fLBn3RJUkQ8",
+          "BrCxgyxciJo"
         ]
       },
       "logomark": {
@@ -1716,7 +1731,21 @@
             ]
           }
         ],
-        "title_strip": "\\s*/{2,}\\s*EVERYTHING IS TERRIBLE!*\\s*$"
+        "title_strip": "\\s*/{2,}\\s*EVERYTHING IS TERRIBLE!*\\s*$",
+        "skip": [
+          "fyaR2ghmXfA",
+          "P7SJUZ4XzE8",
+          "22Wy3BqOqZs",
+          "LLdug4R8mNI",
+          "DCau7OQouFw",
+          "nvq5utWf90M",
+          "paW5Pau_bco",
+          "RbBIE0_w4ds",
+          "PiZQ92wOYTc",
+          "y86qMeev6-Q",
+          "L4-NHTcjhrA",
+          "LevHnLjeOiM"
+        ]
       },
       "logomark": {
         "type": "pixel",
