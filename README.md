@@ -2,7 +2,7 @@
 
 # Spelunkr → Jellyfin Live TV
 
-Turns the 30 channels on [spelunkr.tv](https://spelunkr.tv/) into live TV channels with a full TV guide in Jellyfin. The channels run in sync with the website: the same show, bump card and commercial plays at the same moment as on spelunkr.tv.
+Turns every channel on [spelunkr.tv](https://spelunkr.tv/) into a live TV channel with a full TV guide in Jellyfin. The channels run in sync with the website: the same show, bump card and commercial plays at the same moment as on spelunkr.tv.
 
 ## Install
 
@@ -32,7 +32,7 @@ Details: [Setup on Windows](#setup-on-windows-jellyfin-on-your-own-pc).
 
 Spelunkr doesn't host video streams. The website downloads a schedule (`lineup.json` plus one playlist per channel) and runs a scheduler in your browser. That scheduler decides what plays when: the shows, the text "bump" cards and music between them, the vintage commercial breaks, and the "Up Next" cards. The videos themselves play straight from the Internet Archive.
 
-`spelunkr2jellyfin.py` includes a Python copy of that scheduler. It was checked against the site's own code: all 30 channels matched to the millisecond at three different times (now, 10 days ahead, and 4 days back). For each viewer, the script turns the schedule into one continuous live stream:
+`spelunkr2jellyfin.py` includes a Python copy of that scheduler. It was checked against the site's own code: every channel matched to the millisecond at three different times (now, 10 days ahead, and 4 days back). For each viewer, the script turns the schedule into one continuous live stream:
 
 | URL | What it is |
 |---|---|
@@ -49,7 +49,7 @@ What you'll see:
 - **Up Next cards** on the block-programmed channels (Homeroom, Fallout Shelter, Rubber Hose, Unpaid Programming), with their music stings and the real start times of the next two shows.
 - In the guide, each show's slot runs until the next show starts, so the bumps and breaks after it count as part of it.
 
-The script re-checks the lineup every 30 minutes. Everything it downloads is saved in a `cache` folder next to the script, so if Spelunkr's server is down when the container restarts, it starts from the last saved schedule.
+The script re-checks the lineup every 30 minutes. Everything it downloads is saved in a `cache` folder (next to the script on Windows, in `/config` on Docker), so if Spelunkr's server is down when the bridge restarts, it starts from the last saved schedule.
 
 **Fonts:** the cards use the same retro Star4000 fonts as the site, converted to `.ttf`. Put `star4000.ttf` and `star4000-large.ttf` next to the script. Without them, the cards fall back to DejaVu Sans. Text the retro font can't draw, such as Japanese, uses DejaVu automatically.
 
@@ -67,7 +67,7 @@ The script re-checks the lineup every 30 minutes. Everything it downloads is sav
 
   The example Hack Fraud TV channel gives its episodes the same treatment, because they're shot digitally and would otherwise look too clean. The filter runs on the CPU at SD size, so it's light even when encoding on the GPU. Turn it off for cards with `--no-vhs-cards`. In `channels.json`, `"vhs": ["shows"]` adds it to a channel's shows, and `"ads"` adds it to its commercials.
 - **Shared streams:** every TV watching the same channel shares one stream and one encode, so 4 TVs on one channel cost the same as 1. A TV that tunes in later joins at the live point. A channel stays on the air for 30 seconds after its last viewer leaves, so flipping away and back is instant.
-- **GPU encoding:** with `/dev/dri` passed into the container, the bridge encodes on an Intel GPU through Quick Sync (or VAAPI) instead of the CPU. At startup it runs a 1-second test encode and logs `encoding on the GPU: Quick Sync on /dev/dri/renderD129`. If the GPU doesn't work, it logs why and uses the CPU. Use `--gpu-device` to pick the same render node Jellyfin uses.
+- **GPU encoding:** with `/dev/dri` passed into the container, the bridge encodes on an Intel GPU through Quick Sync (or VAAPI) instead of the CPU. At startup it runs a 1-second test encode and logs `encoding on the GPU: Intel Quick Sync on /dev/dri/renderD128`. If the GPU doesn't work, it logs why and uses the CPU. Use `--gpu-device` to pick the same render node Jellyfin uses.
 - **Episode descriptions:** YouTube episodes get their real descriptions in the guide (just the first paragraph, without the links and plugs). These are fetched in the background a batch at a time after the first start, and saved.
 - **Unplayable videos:** some YouTube videos are age-restricted and can't play without signing in. The background description pass checks every video and drops these from the lineup. If one is ever found while airing, the channel moves to the next show within 30 seconds. Otherwise the change takes effect at the next show. Everything after the dropped video moves up, so Jellyfin's guide catches up at its next Refresh Guide.
 
@@ -256,14 +256,6 @@ The `/config` folder holds the saved schedules and your `channels.json`, if you 
 
 **Updating with Compose:** `docker compose pull && docker compose up -d`.
 
-**Moving from the old `python:3.12-alpine` + Post Arguments setup:**
-1. Change the Repository to the image above.
-2. Clear Post Arguments.
-3. Change the container path `/app` to `/config`, keeping the same appdata folder.
-4. Add `PUBLIC_URL` and `GPU` as variables.
-
-Your existing `channels.json`, music and saved schedules carry over.
-
 ## Setup on Windows (Jellyfin on your own PC)
 
 1. Put this folder somewhere permanent, e.g. `C:\Spelunkr Bridge`. It must contain `spelunkr2jellyfin.py`, the two `star4000` fonts, the `music` folder and the `install-windows` files.
@@ -288,10 +280,14 @@ It encodes on your graphics card when it can: NVIDIA (NVENC), then Intel (Quick 
 
 ## Adding it to Jellyfin
 
+Use your server's IP address below, or `localhost` if Jellyfin and the bridge are on the same Windows PC.
+
 Dashboard → Live TV:
-1. **Tuner Devices → + → M3U Tuner.** File or URL: `http://YOUR-UNRAID-IP:8765/playlist.m3u`
-2. **TV Guide Data Providers → + → XMLTV.** File or URL: `http://YOUR-UNRAID-IP:8765/epg.xml`. The default categories already include movie, kids and sports. If you have other live TV, you can limit this guide to the Spelunkr tuner.
+1. **Tuner Devices → + → M3U Tuner.** File or URL: `http://YOUR-SERVER-IP:8765/playlist.m3u`
+2. **TV Guide Data Providers → + → XMLTV.** File or URL: `http://YOUR-SERVER-IP:8765/epg.xml`. The default categories already include movie, kids and sports. If you have other live TV, you can limit this guide to the Spelunkr tuner.
 3. **Scheduled Tasks → Refresh Guide → ▶**
+
+**Slow to start on one TV?** If a channel takes several seconds longer to start on one Android TV / Google TV box than on others, open the Jellyfin app's settings on that box and turn on **Direct stream Live TV**. The box then plays the bridge's stream as-is instead of waiting for Jellyfin to re-package it. The bridge's stream (H.264 and AAC at 640×480) plays fine on any of these boxes.
 
 ## Options
 
@@ -317,6 +313,8 @@ python spelunkr2jellyfin.py --help
   --skip vacation-slides    leave channels out
   --font FILE               font for bump cards
   --cache DIR               where to save schedule files (default ./cache)
+  --channels FILE           your own channels (default channels.json next to the script)
+  --include-hidden          also show Spelunkr channels marked coming soon
   --now [--at MS --dump N]  print what's on each channel and exit (for testing)
   --export DIR              write playlist.m3u + epg.xml as files and exit
 ```
