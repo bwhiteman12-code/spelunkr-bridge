@@ -332,14 +332,52 @@ It puts everything in your home folder:
 
 Then it starts the bridge, sets it to start again after a reboot, and waits until the channels are loaded. When it's done, it shows the two addresses for Jellyfin with your port filled in. The first run takes a few minutes. If something goes wrong, it says what.
 
-**3. Add it to Jellyfin** as [below](#adding-it-to-jellyfin), using `http://127.0.0.1:12345/playlist.m3u` and `http://127.0.0.1:12345/epg.xml` with your port.
+**3. Add it to Jellyfin** as [below](#adding-it-to-jellyfin), using `http://127.0.0.1:12345/playlist.m3u` and `http://127.0.0.1:12345/epg.xml` with your port. If Jellyfin says *"There was an error saving the TV provider"*, see [Jellyfin can't add the tuner](#jellyfin-cant-add-the-tuner-seedbox).
 
 - **Update it, or change the port:** run the same line again (with the new port, if it changed). After a port change, update the addresses in Jellyfin or Plex.
 - **Stop it:** `pkill -f spelunkr2jellyfin.py`. Start it again with `nohup ~/spelunkr-start.sh </dev/null >/dev/null 2>&1 &`.
 - **Log:** `~/spelunkr-bridge/spelunkr.log`
-- **No port forwarding needed.** The bridge only listens inside the seedbox (`127.0.0.1`). Jellyfin relays the streams to your TVs and phones, so nobody connects to the bridge directly.
+- **Usually no port forwarding needed.** The bridge only listens inside the seedbox (`127.0.0.1`). Jellyfin relays the streams to your TVs and phones, so nobody connects to the bridge directly. Some providers run Jellyfin in its own container, which can't see `127.0.0.1`; then see [below](#jellyfin-cant-add-the-tuner-seedbox).
 - **Light on the CPU:** seedboxes have no GPU and share their CPU, so it uses the fastest encoder setting and draws bump cards without the VHS look. Expect one or two people watching at once to be comfortable. To change the settings, edit the last line of `~/spelunkr-start.sh`, e.g. remove `--no-vhs-cards`. Running the install line again resets that file, so make the edit again after an update.
 - **YouTube channels may stall.** YouTube often blocks seedbox (data-center) addresses, so the YouTube channels may show standby. The Spelunkr channels aren't affected.
+- **Static ffmpeg is handled for you.** The ffmpeg the installer downloads can't look up web addresses (it crashes trying). The bridge notices this when it starts and downloads the videos for it instead. The log then says *"it reads videos through the local relay"*. Nothing to do.
+
+### Jellyfin can't add the tuner (seedbox)
+
+If Jellyfin says *"There was an error saving the TV provider"* when you add `http://127.0.0.1:12345/playlist.m3u`, your provider most likely runs Jellyfin in its own container (SeedHost does, for example). Inside it, `127.0.0.1` is Jellyfin itself, not your account, so it can't reach the bridge.
+
+**First, check the bridge is running.** Over SSH:
+```bash
+curl -s http://127.0.0.1:12345/playlist.m3u | head -n 3
+```
+If that prints `#EXTM3U` and a channel, the bridge is fine and it's the address. If it prints nothing, see the log first.
+
+**Then switch to your seedbox's own address:**
+
+1. Find the address (something like `dust.seedhost.eu`):
+   ```bash
+   hostname -f
+   ```
+2. Stop the bridge:
+   ```bash
+   pkill -f spelunkr2jellyfin.py
+   ```
+3. In `~/spelunkr-start.sh`, change `--host 127.0.0.1` to `--host 0.0.0.0`, and the `127.0.0.1` in `--public-url` to that address. This does both (replace `YOUR-ADDRESS`):
+   ```bash
+   sed -i.bak -e 's|--host 127.0.0.1|--host 0.0.0.0|' -e 's|//127.0.0.1:|//YOUR-ADDRESS:|' ~/spelunkr-start.sh
+   ```
+   Check it with `grep -- --host ~/spelunkr-start.sh`. Copying commands through chat apps can break them; if it does, edit the file with `nano ~/spelunkr-start.sh` instead.
+4. Start it again:
+   ```bash
+   nohup ~/spelunkr-start.sh </dev/null >/dev/null 2>&1 &
+   ```
+5. In Jellyfin, remove the old `127.0.0.1` entries and add `http://YOUR-ADDRESS:12345/playlist.m3u` and `http://YOUR-ADDRESS:12345/epg.xml` (your port), then run **Refresh Guide**.
+
+Notes:
+- **Both settings matter.** `--public-url` is where the playlist points the streams. If it still says `127.0.0.1`, the tuner adds but the channels won't play.
+- **The bridge is now reachable from outside,** with no password, by anyone who knows the address and port.
+- **If it still fails,** your provider may block that port. Use one it assigned you, in `--port`, `--public-url` and the Jellyfin addresses.
+- **Running the install line again resets `~/spelunkr-start.sh`** to `127.0.0.1`. To update without losing the change, use `git -C ~/spelunkr-bridge pull`, then stop and start the bridge as above.
 
 ## Adding it to Jellyfin
 
