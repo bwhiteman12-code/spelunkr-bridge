@@ -26,6 +26,15 @@ Details: [Setup on Windows](#setup-on-windows-jellyfin-on-your-own-pc).
    Unraid users can install it from the template in this repo; see [Setup on Unraid / Docker](#setup-on-unraid--docker).
 2. In Jellyfin, add an **M3U Tuner** with `http://YOUR-SERVER-IP:8765/playlist.m3u` and an **XMLTV** guide with `http://YOUR-SERVER-IP:8765/epg.xml`. Then click **Refresh Guide Data**.
 
+**Seedbox, or Linux without Docker:** for when Jellyfin runs on a Linux machine where you can't use Docker or root, such as a shared seedbox. Windows and Docker users don't need this; use the steps above.
+1. Pick a port. On a shared seedbox, use one your provider assigned you. Run this over SSH with your port in place of `12345`:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/install-seedbox.sh | sh -s 12345
+   ```
+2. In Jellyfin, add an **M3U Tuner** with `http://127.0.0.1:12345/playlist.m3u` and an **XMLTV** guide with `http://127.0.0.1:12345/epg.xml` (your port again). Then click **Refresh Guide Data**.
+
+Details: [Setup on a seedbox](#setup-on-a-seedbox-linux-without-docker).
+
 *A fan project, not affiliated with spelunkr.tv, Everything Is Terrible! or RedLetterMedia.*
 
 ## How it works
@@ -277,6 +286,37 @@ It encodes on your graphics card when it can: NVIDIA (NVENC), then Intel (Quick 
 - **Update the script:** replace the files and run `install-windows.bat` again. It restarts the bridge.
 - **See the log live:** run `install-windows.bat -Uninstall`, then run `start-spelunkr.bat`, which runs the bridge in a window.
 - It only runs while you're logged in, and only while the PC is awake, just like Jellyfin's tray app.
+
+## Setup on a seedbox (Linux without Docker)
+
+**Only for Linux without Docker,** such as a shared seedbox (Whatbox, Ultra.cc, etc.) where Jellyfin runs and you have SSH but no root. On Windows, use the [Windows setup](#setup-on-windows-jellyfin-on-your-own-pc). Wherever Docker works (Unraid, a NAS, a Linux server you control), the [Docker image](#setup-on-unraid--docker) is simpler.
+
+**1. Pick a port.** The bridge needs a port number of its own, which you choose:
+- **On a shared seedbox,** use a port your provider assigned you. It's usually on the provider's control panel, under something like "ports". Other users share the machine, so don't just make one up.
+- **On your own server,** any free number between 1024 and 65535 works, e.g. `8765`.
+
+Below, `12345` is only an example. Replace it with your port.
+
+**2. Install.** Over SSH, run this with your port at the end:
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/install-seedbox.sh | sh -s 12345
+```
+It puts everything in your home folder:
+- the bridge itself, in `~/spelunkr-bridge`
+- ffmpeg, if it's missing
+- yt-dlp and Node.js, for the YouTube channels
+- the example channels
+
+Then it starts the bridge, sets it to start again after a reboot, and waits until the channels are loaded. When it's done, it shows the two addresses for Jellyfin with your port filled in. The first run takes a few minutes. If something goes wrong, it says what.
+
+**3. Add it to Jellyfin** as [below](#adding-it-to-jellyfin), using `http://127.0.0.1:12345/playlist.m3u` and `http://127.0.0.1:12345/epg.xml` with your port.
+
+- **Update it, or change the port:** run the same line again (with the new port, if it changed). After a port change, update the two addresses in Jellyfin.
+- **Stop it:** `pkill -f spelunkr2jellyfin.py`. Start it again with `nohup ~/spelunkr-start.sh </dev/null >/dev/null 2>&1 &`.
+- **Log:** `~/spelunkr-bridge/spelunkr.log`
+- **No port forwarding needed.** The bridge only listens inside the seedbox (`127.0.0.1`). Jellyfin relays the streams to your TVs and phones, so nobody connects to the bridge directly.
+- **Light on the CPU:** seedboxes have no GPU and share their CPU, so it uses the fastest encoder setting and draws bump cards without the VHS look. Expect one or two people watching at once to be comfortable. To change the settings, edit the last line of `~/spelunkr-start.sh`, e.g. remove `--no-vhs-cards`. Running the install line again resets that file, so make the edit again after an update.
+- **YouTube channels may stall.** YouTube often blocks seedbox (data-center) addresses, so the YouTube channels may show standby. The Spelunkr channels aren't affected.
 
 ## Adding it to Jellyfin
 
