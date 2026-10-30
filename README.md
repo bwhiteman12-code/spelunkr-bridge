@@ -4,6 +4,8 @@
 
 Turns every channel on [spelunkr.tv](https://spelunkr.tv/) into a live TV channel with a full TV guide in **Jellyfin** or **Plex**. The channels run in sync with the website: the same show, bump card and commercial plays at the same moment as on spelunkr.tv.
 
+You always get all of Spelunkr's channels, including ones added after you install. The bridge reads Spelunkr's current channel list when it starts and checks it again every 30 minutes, so new channels appear without updating anything.
+
 | | Jellyfin | Plex |
 |---|---|---|
 | Cost | Free | Live TV needs a paid **Plex Pass** subscription |
@@ -229,7 +231,7 @@ Then restart the container (click its icon → **Restart**). To build your own c
 
 **4. Check the log** (container icon → **Logs**). When it's ready you'll see:
 ```
-lineup loaded: 31 channels                 (or "33 channels (2 custom)" with the examples)
+lineup loaded: … channels                  (all of Spelunkr's current channels, plus "(2 custom)" with the examples)
 encoding on the GPU: Intel Quick Sync on /dev/dri/renderD128     (or "the CPU (x264)")
 ready - M3U: http://YOUR-UNRAID-IP:8765/playlist.m3u
 ```
