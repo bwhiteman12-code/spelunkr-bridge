@@ -385,6 +385,9 @@ python spelunkr2jellyfin.py --help
   --gpu-device auto         Linux GPU render node, e.g. /dev/dri/renderD129 (auto: try each one)
   --host 0.0.0.0            address to listen on (127.0.0.1 = this PC only)
   --ffmpeg / --ffprobe      ffmpeg to use (default: on PATH, else Jellyfin's copy on Windows)
+  --relay auto              download videos in Python and hand them to ffmpeg locally (auto: only
+                            when ffmpeg can't look up web addresses itself, as with static builds
+                            on seedboxes); on or off to force it
   --log-file FILE           also write the log to a file
   --no-static               skip the tune-in TV snow
   --no-logo-bug             skip the corner channel logo
