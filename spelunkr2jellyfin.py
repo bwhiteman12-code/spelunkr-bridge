@@ -2433,6 +2433,30 @@ def build_m3u(catalog, base):
     return "\n".join(lines) + "\n"
 
 
+def hdhr_discover(base, tuners, device_id):
+    """What a real HDHomeRun tuner reports about itself. Plex reads this to add the bridge as a tuner."""
+    return {"FriendlyName": "Spelunkr Bridge", "Manufacturer": "Silicondust", "ModelNumber": "HDTC-2US",
+            "FirmwareName": "hdhomeruntc_atsc", "FirmwareVersion": "20200101", "DeviceID": device_id,
+            "DeviceAuth": "spelunkrbridge", "BaseURL": base, "LineupURL": "%s/lineup.json" % base,
+            "TunerCount": tuners}
+
+
+def hdhr_lineup(catalog, base):
+    """The channel list in HDHomeRun form. GuideNumber matches a display-name in epg.xml, so Plex maps the guide."""
+    return [{"GuideNumber": str(c.get("dial") or i + 1), "GuideName": c["name"],
+             "URL": "%s/stream/%s.ts" % (base, c["id"])} for i, c in enumerate(list(catalog.channels))]
+
+
+def hdhr_device_xml(base, device_id):
+    e = xml_escape
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<root xmlns="urn:schemas-upnp-org:device-1-0"><specVersion><major>1</major><minor>0</minor></specVersion>'
+            '<URLBase>%s</URLBase><device><deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>'
+            '<friendlyName>Spelunkr Bridge</friendlyName><manufacturer>Silicondust</manufacturer>'
+            '<modelName>HDTC-2US</modelName><modelNumber>HDTC-2US</modelNumber><serialNumber></serialNumber>'
+            '<UDN>uuid:%s</UDN></device></root>\n' % (e(base), e(device_id)))
+
+
 def _xmltv_time(ms):
     return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).strftime("%Y%m%d%H%M%S +0000")
 
@@ -2557,6 +2581,8 @@ class Handler(BaseHTTPRequestHandler):
     streamer = None
     public_url = None
     hours_ahead = 72
+    tuners = 4
+    device_id = "5EE1B0B0"
     _logo_cache = {}
 
     def log_message(self, fmt, *args):
@@ -2591,6 +2617,17 @@ class Handler(BaseHTTPRequestHandler):
             if path in ("/epg.xml", "/xmltv.xml", "/guide.xml"):
                 return self._send(200, build_xmltv(self.catalog, self.base(), hours_ahead=self.hours_ahead),
                                   "application/xml; charset=utf-8", head_only)
+            # HDHomeRun look-alike, so Plex can add the bridge as a tuner (Jellyfin doesn't use these)
+            if path == "/discover.json":
+                return self._send(200, json.dumps(hdhr_discover(self.base(), self.tuners, self.device_id)),
+                                  "application/json", head_only)
+            if path == "/lineup.json":
+                return self._send(200, json.dumps(hdhr_lineup(self.catalog, self.base())), "application/json", head_only)
+            if path == "/lineup_status.json":
+                return self._send(200, json.dumps({"ScanInProgress": 0, "ScanPossible": 1, "Source": "Cable",
+                                                   "SourceList": ["Cable"]}), "application/json", head_only)
+            if path == "/device.xml":
+                return self._send(200, hdhr_device_xml(self.base(), self.device_id), "application/xml", head_only)
             if path.startswith("/logo/") and path.endswith(".png"):
                 c = self.catalog.channel(path[6:-4])
                 if not c:
@@ -2617,6 +2654,12 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(404, "not found", "text/plain", head_only)
         except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
             pass
+
+    def do_POST(self):
+        # Plex's "scan channels" button on an HDHomeRun; the lineup is always ready, so just say OK
+        if urllib.parse.urlparse(self.path).path == "/lineup.post":
+            return self._send(200, "", "text/plain")
+        return self._send(404, "not found", "text/plain")
 
 
 def hw_args(hw):
@@ -2694,6 +2737,8 @@ def main():
     ap.add_argument("--preset", default="veryfast", help="x264 preset (default veryfast)")
     ap.add_argument("--maxrate", type=int, default=2000, help="max video bitrate in kbps (default 2000)")
     ap.add_argument("--hours", type=int, default=72, help="hours of guide data to publish (default 72)")
+    ap.add_argument("--tuners", type=int, default=4,
+                    help="for Plex: how many channels can be watched at once (default 4)")
     ap.add_argument("--lead", type=float, default=0.0,
                     help="run this many seconds ahead of spelunkr.tv, to cancel out your player's buffering delay "
                          "(e.g. 8 if Jellyfin shows things 8s after the website does)")
@@ -2789,6 +2834,9 @@ def main():
                                 vhs_cards=not a.no_vhs_cards)
     Handler.public_url = public
     Handler.hours_ahead = a.hours
+    Handler.tuners = max(1, a.tuners)
+    # the same ID on every start (it only changes with the address), so Plex keeps its tuner and channel mapping
+    Handler.device_id = "%08X" % (zlib.crc32(("%s|%d" % (public or "", a.port)).encode()) & 0xFFFFFFFF)
     threading.Thread(target=refresher, args=(catalog,), daemon=True).start()
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     srv.daemon_threads = True

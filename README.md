@@ -1,39 +1,60 @@
 <img src="assets/icon.png" alt="" width="96" align="right">
 
-# Spelunkr → Jellyfin Live TV
+# Spelunkr → Jellyfin & Plex Live TV
 
-Turns every channel on [spelunkr.tv](https://spelunkr.tv/) into a live TV channel with a full TV guide in Jellyfin. The channels run in sync with the website: the same show, bump card and commercial plays at the same moment as on spelunkr.tv.
+Turns every channel on [spelunkr.tv](https://spelunkr.tv/) into a live TV channel with a full TV guide in **Jellyfin** or **Plex**. The channels run in sync with the website: the same show, bump card and commercial plays at the same moment as on spelunkr.tv.
+
+| | Jellyfin | Plex |
+|---|---|---|
+| Cost | Free | Live TV needs a paid **Plex Pass** subscription |
+| How it's added | M3U tuner + XMLTV guide | As an HDHomeRun tuner + XMLTV guide (no Threadfin or xTeVe needed) |
 
 ## Install
 
-**Windows, with Jellyfin on your own PC:**
+Two steps: run the bridge, then add it to Jellyfin or Plex.
+
+### 1. Run the bridge
+
+**Windows** (on the same PC as Jellyfin or Plex):
 1. Download `Spelunkr-Bridge-Windows.zip` from the [latest release](../../releases/latest).
 2. Unzip it somewhere permanent, e.g. `C:\Spelunkr Bridge`.
-3. Double-click `install-windows.bat`. When it's ready, it shows the two URLs.
-4. In Jellyfin, go to Dashboard → Live TV:
-   - add an **M3U Tuner** with `http://localhost:8765/playlist.m3u`
-   - add an **XMLTV** guide with `http://localhost:8765/epg.xml`
-   - click **Refresh Guide Data**
+3. **Plex users only:** install ffmpeg once by running `winget install Gyan.FFmpeg` in a terminal. Jellyfin already comes with it.
+4. Double-click `install-windows.bat`. When it's ready, it shows the addresses to use.
 
 Details: [Setup on Windows](#setup-on-windows-jellyfin-on-your-own-pc).
 
-**Unraid / Docker:**
-1. Run the image `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`:
-   - publish port 8765
-   - mount a folder at `/config`
-   - set `PUBLIC_URL=http://YOUR-SERVER-IP:8765`
+**Unraid / Docker:** run the image `ghcr.io/bwhiteman12-code/spelunkr-bridge:latest`:
+- publish port 8765
+- mount a folder at `/config`
+- set `PUBLIC_URL=http://YOUR-SERVER-IP:8765`
 
-   Unraid users can install it from the template in this repo; see [Setup on Unraid / Docker](#setup-on-unraid--docker).
-2. In Jellyfin, add an **M3U Tuner** with `http://YOUR-SERVER-IP:8765/playlist.m3u` and an **XMLTV** guide with `http://YOUR-SERVER-IP:8765/epg.xml`. Then click **Refresh Guide Data**.
+Unraid users can install it from the template in this repo; see [Setup on Unraid / Docker](#setup-on-unraid--docker).
 
-**Seedbox, or Linux without Docker:** for when Jellyfin runs on a Linux machine where you can't use Docker or root, such as a shared seedbox. Windows and Docker users don't need this; use the steps above.
-1. Pick a port. On a shared seedbox, use one your provider assigned you. Run this over SSH with your port in place of `12345`:
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/install-seedbox.sh | sh -s 12345
-   ```
-2. In Jellyfin, add an **M3U Tuner** with `http://127.0.0.1:12345/playlist.m3u` and an **XMLTV** guide with `http://127.0.0.1:12345/epg.xml` (your port again). Then click **Refresh Guide Data**.
-
+**Seedbox, or Linux without Docker:** for a Linux machine where you can't use Docker or root, such as a shared seedbox. Windows and Docker users don't need this; use the steps above. Pick a port (on a shared seedbox, one your provider assigned you) and run this over SSH, with your port in place of `12345`:
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwhiteman12-code/spelunkr-bridge/main/install-seedbox.sh | sh -s 12345
+```
 Details: [Setup on a seedbox](#setup-on-a-seedbox-linux-without-docker).
+
+### 2. Add it to Jellyfin or Plex
+
+In the addresses below, replace `SERVER:8765` with where the bridge runs:
+- **Windows:** `127.0.0.1:8765` (this PC)
+- **Docker:** your server's IP address, e.g. `192.168.1.20:8765`
+- **Seedbox:** `127.0.0.1` with your port, e.g. `127.0.0.1:12345`
+
+**Jellyfin** (free). Go to Dashboard → Live TV:
+1. Add an **M3U Tuner** with `http://SERVER:8765/playlist.m3u`.
+2. Add an **XMLTV** guide with `http://SERVER:8765/epg.xml`.
+3. Click **Refresh Guide Data**.
+
+Details: [Adding it to Jellyfin](#adding-it-to-jellyfin).
+
+**Plex** (Live TV requires a paid **Plex Pass**). Go to Settings → Live TV & DVR → **Set Up Plex DVR**:
+1. Enter the device address manually: `SERVER:8765`.
+2. When Plex asks for a guide, choose XMLTV and enter `http://SERVER:8765/epg.xml`.
+
+Details: [Adding it to Plex](#adding-it-to-plex).
 
 *A fan project, not affiliated with spelunkr.tv, Everything Is Terrible! or RedLetterMedia.*
 
@@ -272,7 +293,7 @@ The `/config` folder holds the saved schedules and your `channels.json`, if you 
    - find Python 3, or offer to install it with winget
    - install or update yt-dlp, which the YouTube channels need
    - offer to install Node.js if you've added your own channels (YouTube needs it to unlock video streams)
-   - find the ffmpeg that comes with Jellyfin (no separate install needed)
+   - find the ffmpeg that comes with Jellyfin (no separate install needed). With Plex instead, install ffmpeg first with `winget install Gyan.FFmpeg`.
    - start the bridge in the background with no window, and set it to start again every time you log in
    - wait until the channels are loaded, then show the two URLs for Jellyfin
 
@@ -289,7 +310,7 @@ It encodes on your graphics card when it can: NVIDIA (NVENC), then Intel (Quick 
 
 ## Setup on a seedbox (Linux without Docker)
 
-**Only for Linux without Docker,** such as a shared seedbox (Whatbox, Ultra.cc, etc.) where Jellyfin runs and you have SSH but no root. On Windows, use the [Windows setup](#setup-on-windows-jellyfin-on-your-own-pc). Wherever Docker works (Unraid, a NAS, a Linux server you control), the [Docker image](#setup-on-unraid--docker) is simpler.
+**Only for Linux without Docker,** such as a shared seedbox (Whatbox, Ultra.cc, etc.) where Jellyfin or Plex runs and you have SSH but no root. On Windows, use the [Windows setup](#setup-on-windows-jellyfin-on-your-own-pc). Wherever Docker works (Unraid, a NAS, a Linux server you control), the [Docker image](#setup-on-unraid--docker) is simpler.
 
 **1. Pick a port.** The bridge needs a port number of its own, which you choose:
 - **On a shared seedbox,** use a port your provider assigned you. It's usually on the provider's control panel, under something like "ports". Other users share the machine, so don't just make one up.
@@ -311,7 +332,7 @@ Then it starts the bridge, sets it to start again after a reboot, and waits unti
 
 **3. Add it to Jellyfin** as [below](#adding-it-to-jellyfin), using `http://127.0.0.1:12345/playlist.m3u` and `http://127.0.0.1:12345/epg.xml` with your port.
 
-- **Update it, or change the port:** run the same line again (with the new port, if it changed). After a port change, update the two addresses in Jellyfin.
+- **Update it, or change the port:** run the same line again (with the new port, if it changed). After a port change, update the addresses in Jellyfin or Plex.
 - **Stop it:** `pkill -f spelunkr2jellyfin.py`. Start it again with `nohup ~/spelunkr-start.sh </dev/null >/dev/null 2>&1 &`.
 - **Log:** `~/spelunkr-bridge/spelunkr.log`
 - **No port forwarding needed.** The bridge only listens inside the seedbox (`127.0.0.1`). Jellyfin relays the streams to your TVs and phones, so nobody connects to the bridge directly.
@@ -329,6 +350,22 @@ Dashboard → Live TV:
 
 **Slow to start on one TV?** If a channel takes several seconds longer to start on one Android TV / Google TV box than on others, open the Jellyfin app's settings on that box and turn on **Direct stream Live TV**. The box then plays the bridge's stream as-is instead of waiting for Jellyfin to re-package it. The bridge's stream (H.264 and AAC at 640×480) plays fine on any of these boxes.
 
+## Adding it to Plex
+
+**Plex Live TV requires a paid Plex Pass subscription.** Without it, Plex doesn't offer Live TV & DVR at all, and this section won't work. Jellyfin is free.
+
+Plex doesn't accept M3U tuners, only HDHomeRun network tuners. The bridge also acts like an HDHomeRun, so Plex can use it directly with no Threadfin or xTeVe in between. Use the same address and port as for Jellyfin: on Windows `127.0.0.1:8765`, on Docker your server's IP, on a seedbox `127.0.0.1` and your port.
+
+1. **Settings → Live TV & DVR → Set Up Plex DVR.** Plex looks for tuners. When it doesn't find this one on its own, choose to enter the device's network address, and type `YOUR-SERVER-IP:8765`.
+2. **Continue** past the channel list. Every channel is listed, already numbered.
+3. **When Plex asks for a guide,** choose the option to use an XMLTV guide, and enter `http://YOUR-SERVER-IP:8765/epg.xml`.
+4. Plex matches each channel to the guide by its number. Check the list, then finish.
+
+- **How many can watch:** the bridge tells Plex it has 4 tuners, so Plex lets 4 channels be watched at once. To allow more (or fewer), add e.g. `--tuners 6` to the [options](#options).
+- **Windows:** Plex doesn't come with a usable ffmpeg, so install it once with `winget install Gyan.FFmpeg` before running `install-windows.bat`.
+- **Channel changes** can take a few seconds longer than in Jellyfin, because Plex usually re-encodes live TV.
+- **Jellyfin doesn't use any of this.** It works the same whether or not anyone uses Plex, and you can use both at once.
+
 ## Options
 
 ```
@@ -339,6 +376,7 @@ python spelunkr2jellyfin.py --help
   --maxrate 2000            max video kbps
   --preset veryfast         x264 speed/quality (ultrafast = lower CPU)
   --hours 72                hours of guide to publish
+  --tuners 4                for Plex: how many channels can be watched at once
   --lead 0                  run N seconds ahead of the website, to cancel out Jellyfin's buffering
   --hwaccel auto            GPU encoding: auto (Linux: Quick Sync, then VAAPI; Windows: NVIDIA, Quick Sync,
                             then AMD; then CPU), qsv, vaapi, nvenc, amf or none

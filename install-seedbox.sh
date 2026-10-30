@@ -156,6 +156,9 @@ In Jellyfin: Dashboard > Live TV
        http://127.0.0.1:$PORT/epg.xml
   3. Scheduled Tasks > Refresh Guide > Run
 
+Plex instead (Live TV needs Plex Pass): Settings > Live TV & DVR > Set Up Plex DVR,
+  enter the device address 127.0.0.1:$PORT, and for the guide use the XMLTV address above.
+
 Log:    tail -f $DIR/spelunkr.log
 Stop:   pkill -f spelunkr2jellyfin.py
 Start:  nohup $START >/dev/null 2>&1 &

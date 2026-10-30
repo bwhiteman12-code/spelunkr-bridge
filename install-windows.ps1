@@ -94,7 +94,8 @@ Step "ffmpeg"
 $ff = & $Python -c "import importlib.util as u; s=u.spec_from_file_location('s', r'$Script'); m=u.module_from_spec(s); s.loader.exec_module(m); print(m.find_tool('ffmpeg'))"
 if ($ff -and ((Test-Path $ff) -or (Get-Command $ff -ErrorAction SilentlyContinue))) { Say "Using $ff" "Green" }
 else {
-    Say "Can't find ffmpeg. Install Jellyfin (it comes with ffmpeg) or put ffmpeg.exe and ffprobe.exe on PATH." "Red"
+    Say "Can't find ffmpeg. Jellyfin comes with it; with Plex, install it once with:  winget install Gyan.FFmpeg" "Red"
+    Say "Then run install-windows.bat again." "Red"
     exit 1
 }
 
@@ -143,13 +144,16 @@ if (-not $ok) {
     exit 1
 }
 
-Step "Ready - now add it to Jellyfin"
+Step "Ready - now add it to Jellyfin (or Plex, below)"
 Say "In Jellyfin: Dashboard > Live TV"
 Say "  1. Tuner Devices > +  > type 'M3U Tuner', File or URL:"
 Say "       http://localhost:$Port/playlist.m3u" "Yellow"
 Say "  2. TV Guide Data Providers > +  > XMLTV, File or URL:"
 Say "       http://localhost:$Port/epg.xml" "Yellow"
 Say "  3. Back on the Live TV page, click 'Refresh Guide Data'."
+Say ""
+Say "Plex instead (Live TV needs Plex Pass): Settings > Live TV & DVR > Set Up Plex DVR,"
+Say "  enter the device address 127.0.0.1:$Port, and for the guide use the XMLTV address above."
 Say ""
 Say "What's on now: $url    Log: $LogFile"
 Say "To stop it for good: install-windows.bat -Uninstall"
