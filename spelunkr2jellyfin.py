@@ -58,6 +58,7 @@ PLATFORM_BORDER = ["#2652b2", "#25469b", "#243a83", "#232c64"]
 
 log = logging.getLogger("spelunkr")
 CACHE_DIR = None
+FFMPEG = None
 WINDOWS = os.name == "nt"
 # On Windows, keep ffmpeg / yt-dlp from opening console windows when running in the background.
 NO_WINDOW = {"creationflags": 0x08000000} if WINDOWS else {}
@@ -764,6 +765,7 @@ class Catalog:
         self._refresh_lock = threading.Lock()
         self._refresh_soon = False
         self._desc_tried = set()
+        self._tape_cuts, self._tape_queue, self._tape_busy = {}, [], False   # archive.org commercial tapes
 
     def mark_unplayable_done(self):
         """After marking videos unplayable in bulk: rebuild the lineup once, in the background."""
@@ -858,7 +860,113 @@ class Catalog:
 
     def _ad_pool(self, rule):
         """Commercials for a custom channel, picked from Spelunkr's own ad reels
-        (read from every Spelunkr playlist, even channels left out with --only/--skip)."""
+        (read from every Spelunkr playlist, even channels left out with --only/--skip),
+        plus any Internet Archive tapes listed under "archive"."""
+        extra = self._archive_ads(rule.get("archive") or [])
+        if rule.get("spelunkr") is False:
+            return extra
+        return self._spelunkr_ads(rule) + extra
+
+    # -- commercials from your own Internet Archive tapes ------------------------------
+
+    def _archive_ads(self, tapes):
+        """Ad breaks cut from archive.org tapes. Each tape is looked at once, in the background:
+        it's split at black frames into breaks of 1-3 minutes and its loudness is measured.
+        Until a tape is done it's simply left out."""
+        pool, todo = [], []
+        for t in tapes:
+            t = {"id": t} if isinstance(t, str) else dict(t)
+            ident = str(t.get("id") or "").strip()
+            if not ident:
+                continue
+            cuts = self._tape_cuts.get(ident)
+            path = os.path.join(CACHE_DIR, "archive_ads__%s.json" % re.sub(r"[^A-Za-z0-9._-]", "_", ident)) if CACHE_DIR else None
+            if cuts is None and path and os.path.exists(path):
+                try:
+                    with open(path, encoding="utf-8") as f:
+                        cuts = self._tape_cuts[ident] = json.load(f)
+                except (OSError, ValueError):
+                    cuts = None
+            if cuts is None:
+                todo.append((ident, t, path))
+                continue
+            year = str(t["year"]) if t.get("year") else cuts.get("year")
+            for s in cuts.get("slices") or []:
+                pool.append(dict(s, year=year, anywhere=True) if t.get("anywhere", True) else dict(s, year=year))
+        if todo and self.fetch_descriptions:
+            known = {q[0] for q in self._tape_queue}
+            self._tape_queue += [q for q in todo if q[0] not in known]
+            if not self._tape_busy:
+                self._tape_busy = True
+                log.info("looking at %d commercial tape(s) from the Internet Archive (once, in the background)", len(todo))
+                threading.Thread(target=self._tape_worker, daemon=True).start()
+        return pool
+
+    def _tape_worker(self):
+        from concurrent.futures import ThreadPoolExecutor
+        done = 0
+        try:
+            while self._tape_queue:
+                batch, self._tape_queue = self._tape_queue, []
+                with ThreadPoolExecutor(3) as ex:
+                    done += sum(ex.map(lambda q: self._cut_tape(*q), batch))
+        finally:
+            self._tape_busy = False
+        if done:
+            log.info("%d commercial tape(s) ready", done)
+            self.mark_unplayable_done()      # rebuild the lineup with them
+
+    def _cut_tape(self, ident, t, path):
+        try:
+            meta = fetch_json("https://archive.org/metadata/%s" % urllib.parse.quote(ident), timeout=60)
+            files = [f for f in meta.get("files") or []
+                     if f.get("name", "").lower().endswith((".mp4", ".m4v")) and f.get("length")]
+            if t.get("file"):
+                files = [f for f in files if f["name"] == t["file"]] or files
+            if not files:
+                raise RuntimeError("no mp4 video in this item")
+            f = min(files, key=lambda f: int(f.get("size") or 10 ** 12))   # the smallest copy is plenty at SD
+            length = 0.0
+            for part in str(f["length"]).split(":"):
+                length = length * 60 + float(part)
+            m = (meta.get("metadata") or {})
+            year = str(t.get("year") or "") or next(
+                (y.group(1) for v in (m.get("year"), m.get("date"), m.get("title"), ident)
+                 for y in [re.search(r"\b(19[4-9]\d|20[0-2]\d)\b", str(v or ""))] if y), None)
+            ff = FFMPEG or find_tool("ffmpeg")
+            r = subprocess.run([ff, "-hide_banner", "-nostats", "-nostdin", "-i", archive_url(ident, f["name"]),
+                                "-vf", "scale=160:-2,blackdetect=d=0.08:pix_th=0.12", "-af", "ebur128",
+                                "-f", "null", "-"], capture_output=True, text=True, encoding="utf-8",
+                               errors="replace", timeout=3 * 3600, **NO_WINDOW)
+            err = r.stderr or ""
+            bounds = sorted((float(a) + float(b)) / 2 for a, b in
+                            re.findall(r"black_start:([\d.]+) black_end:([\d.]+)", err))
+            loud = re.findall(r"\bI:\s+(-?[\d.]+) LUFS", err)
+            gain = max(-20.0, min(20.0, -25.0 - float(loud[-1]))) if loud and float(loud[-1]) > -70 else 0.0
+            slices, start = [], 0.0
+            while length - start >= 20:
+                if length - start <= 180:
+                    end = length
+                else:
+                    near = [b for b in bounds if start + 60 <= b <= start + 180]
+                    end = min(near, key=lambda b: abs(b - start - 120)) if near else start + 120
+                slices.append({"id": "ia:%s/%s@%d" % (ident, f["name"], start * 1000), "tape": ident,
+                               "file": f["name"], "inMs": int(start * 1000), "lengthMs": int((end - start) * 1000),
+                               "gainDb": round(gain, 1)})
+                start = end
+            cuts = {"year": year, "slices": slices}
+            if path:
+                with open(path, "w", encoding="utf-8") as fh:
+                    json.dump(cuts, fh)
+            self._tape_cuts[ident] = cuts
+            log.info("commercial tape %s: %d breaks", ident, len(slices))
+            return 1
+        except Exception as e:
+            log.warning("commercial tape %s can't be used: %s", ident, e)
+            self._tape_cuts[ident] = {"year": None, "slices": []}   # don't retry until restart
+            return 0
+
+    def _spelunkr_ads(self, rule):
         seen = {}
         for c in (self._lineup or {}).get("channels", []):
             for m in c.get("versions") or []:
@@ -2576,7 +2684,7 @@ def refresher(catalog):
 
 
 def main():
-    global CACHE_DIR
+    global CACHE_DIR, FFMPEG
     ap = argparse.ArgumentParser(description="Serve spelunkr.tv channels as M3U + XMLTV live TV for Jellyfin.")
     ap.add_argument("--host", default="0.0.0.0", help="address to listen on (default 0.0.0.0)")
     ap.add_argument("--port", type=int, default=8765)
@@ -2630,6 +2738,7 @@ def main():
         CACHE_DIR = a.cache
     except OSError as e:
         log.warning("can't use cache folder %s: %s", a.cache, e)
+    FFMPEG = a.ffmpeg
     split = lambda s: [x.strip() for x in s.split(",") if x.strip()] if s else None
     catalog = Catalog(a.include_hidden, split(a.only), split(a.skip), a.channels)
     catalog.fetch_descriptions = not (a.now or a.export)

@@ -152,7 +152,9 @@ Per channel:
 - `music` and `network_music`: the music beds under the cards. Each track has a `file` (an mp3; paths like `music/...` also find the bundled music folder), `title`, `artist`, `source`, `license` and `license_version`. The credit is shown on screen.
 - `vhs`: `["shows"]` and/or `["ads"]` adds the worn-VHS look to that channel's shows or commercials.
 - `logomark`: a 32×32 pixel grid in Spelunkr's format. An optional `palette` adds your own letter → color pairs.
-- `ads`: years, exclude and boost filters, boost weight.
+- `ads`: years, exclude and boost filters, boost weight. These pick from Spelunkr's own commercial reels.
+  - `archive`: your own commercials from the [Internet Archive](https://archive.org), as a list of item ids, e.g. `["1993-mtv-commercials", {"id": "capture-a-644", "year": 1986}]` (the id is the part after `archive.org/details/`). Good fits are tapes of real commercial breaks, like the MTV and VH1 ones. Each tape is downloaded once in the background, split at its black frames into breaks of 1 to 3 minutes and volume-matched, then saved in the cache. Until a tape is done it's just left out, so a long list takes a little while to fill in the first time.
+  - `"spelunkr": false`: use only your `archive` tapes, none of Spelunkr's.
 - `mid_break_minutes` (default 8) and `ad_gap_minutes` (default 20).
 - `card_seconds`: how long each bump card stays up. The examples use 20. The slides slow down evenly to fill the time, and a full station break (channel card plus network card) runs about 44 seconds. Leave it out for Spelunkr's own pacing.
 
