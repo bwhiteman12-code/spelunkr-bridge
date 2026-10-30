@@ -31,6 +31,7 @@ import math
 import os
 import queue
 import re
+import secrets
 import shutil
 import struct
 import subprocess
@@ -38,6 +39,7 @@ import sys
 import tempfile
 import threading
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import zlib
@@ -59,6 +61,7 @@ PLATFORM_BORDER = ["#2652b2", "#25469b", "#243a83", "#232c64"]
 log = logging.getLogger("spelunkr")
 CACHE_DIR = None
 FFMPEG = None
+RELAY = None                     # set when ffmpeg reads web files through the local Relay
 WINDOWS = os.name == "nt"
 # On Windows, keep ffmpeg / yt-dlp from opening console windows when running in the background.
 NO_WINDOW = {"creationflags": 0x08000000} if WINDOWS else {}
@@ -148,6 +151,114 @@ def is_permanent_yt_error(msg):
 
 def archive_url(identifier, filename):
     return "https://archive.org/download/%s/%s" % (identifier, urllib.parse.quote(filename, safe="!'()*~"))
+
+
+# ---------------------------------------------------------------------------
+# Relay: lets ffmpeg read web files without looking up web addresses itself
+# ---------------------------------------------------------------------------
+
+class Relay:
+    """Downloads web files for ffmpeg, in Python.
+
+    Static ffmpeg builds (like johnvansickle.com's, which install-seedbox.sh fetches) can crash the
+    moment they look up a web address such as archive.org. Through the relay, ffmpeg only connects
+    to 127.0.0.1 by number. Range requests pass through, so seeking into a show still works.
+    It listens on this machine only, and every link carries a random key, so other users of a
+    shared machine can't use it."""
+
+    SKIP_UP = {"host", "connection", "keep-alive", "icy-metadata", "accept-encoding", "te", "upgrade",
+               "proxy-connection", "proxy-authorization"}
+    PASS_DOWN = ("Content-Type", "Content-Length", "Content-Range", "Accept-Ranges", "Last-Modified", "ETag")
+
+    def __init__(self):
+        self.key = secrets.token_hex(16)
+        relay = self
+
+        class _Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args):
+                pass
+
+            def do_HEAD(self):
+                relay._serve(self, head=True)
+
+            def do_GET(self):
+                relay._serve(self)
+
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), _Handler)
+        self.server.daemon_threads = True
+        self.port = self.server.server_address[1]
+        self.prefix = "http://127.0.0.1:%d/%s/" % (self.port, self.key)
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+
+    def close(self):
+        self.server.shutdown()
+        self.server.server_close()
+
+    def wrap(self, url):
+        """The relay link for a web address (anything else, like a local file, is left alone)."""
+        return self.prefix + urllib.parse.quote(url, safe="") if url.startswith(("http://", "https://")) else url
+
+    def unwrap_text(self, text):
+        """Put the real addresses back in ffmpeg's messages (and keep the key out of the log)."""
+        return re.sub(re.escape(self.prefix) + r"(\S+)", lambda m: urllib.parse.unquote(m.group(1)), text)
+
+    def _serve(self, h, head=False):
+        key, _, rest = h.path.lstrip("/").partition("/")
+        if not secrets.compare_digest(key.encode(), self.key.encode()):
+            h.send_error(404)
+            return
+        if rest == "ping":               # for ffmpeg_resolves_names
+            body = bytes(4000)
+            h.send_response(200)
+            h.send_header("Content-Type", "application/octet-stream")
+            h.send_header("Content-Length", str(len(body)))
+            h.end_headers()
+            if not head:
+                h.wfile.write(body)
+            return
+        url = urllib.parse.unquote(rest)
+        if not url.startswith(("http://", "https://")):
+            h.send_error(400)
+            return
+        # pass on what ffmpeg asked with: user agent, Range for seeking, YouTube's extra headers
+        headers = {k: v for k, v in h.headers.items() if k.lower() not in self.SKIP_UP}
+        req = urllib.request.Request(url, headers=headers, method="HEAD" if head else "GET")
+        try:
+            r = urllib.request.urlopen(req, timeout=30)
+        except urllib.error.HTTPError as e:
+            r = e                        # pass the refusal (e.g. YouTube's 403) on to ffmpeg as it is
+        except Exception as e:
+            log.debug("relay: %s: %s", url, e)
+            h.send_error(502)
+            return
+        with r:
+            h.send_response(getattr(r, "status", None) or r.code)
+            for k in self.PASS_DOWN:
+                v = r.headers.get(k)
+                if v:
+                    h.send_header(k, v)
+            h.send_header("Connection", "close")
+            h.end_headers()
+            if head:
+                return
+            try:
+                while True:
+                    chunk = r.read(65536)
+                    if not chunk:
+                        break
+                    h.wfile.write(chunk)
+            except (OSError, ValueError):    # ffmpeg hung up (e.g. to seek), or the download broke
+                pass
+
+
+def ffmpeg_resolves_names(ffmpeg, relay):
+    """Can this ffmpeg open a web address by name? Static builds often crash trying (exit -11)."""
+    cmd = [ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", "-f", "s16le", "-ar", "8000", "-ac", "1",
+           "-i", "http://localhost:%d/%s/ping" % (relay.port, relay.key), "-f", "null", "-"]
+    try:
+        return subprocess.run(cmd, capture_output=True, timeout=20, **NO_WINDOW).returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        return False
 
 
 # ---------------------------------------------------------------------------
@@ -934,7 +1045,8 @@ class Catalog:
                 (y.group(1) for v in (m.get("year"), m.get("date"), m.get("title"), ident)
                  for y in [re.search(r"\b(19[4-9]\d|20[0-2]\d)\b", str(v or ""))] if y), None)
             ff = FFMPEG or find_tool("ffmpeg")
-            r = subprocess.run([ff, "-hide_banner", "-nostats", "-nostdin", "-i", archive_url(ident, f["name"]),
+            src = archive_url(ident, f["name"])
+            r = subprocess.run([ff, "-hide_banner", "-nostats", "-nostdin", "-i", RELAY.wrap(src) if RELAY else src,
                                 "-vf", "scale=160:-2,blackdetect=d=0.08:pix_th=0.12", "-af", "ebur128",
                                 "-f", "null", "-"], capture_output=True, text=True, encoding="utf-8",
                                errors="replace", timeout=3 * 3600, **NO_WINDOW)
@@ -1928,7 +2040,8 @@ class Streamer:
                    "-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "10"]
             if hdrs:
                 net += ["-headers", "".join("%s: %s\r\n" % kv for kv in hdrs.items())]
-        return net + ["-ss", "%.3f" % max(0.0, seek)] + (["-re"] if realtime else []) + ["-i", url]
+        return (net + ["-ss", "%.3f" % max(0.0, seek)] + (["-re"] if realtime else [])
+                + ["-i", RELAY.wrap(url) if RELAY else url])
 
     def _logo_file(self, channel, tmp):
         p = os.path.join(tmp, "logo.png")
@@ -2307,6 +2420,8 @@ class Streamer:
                     continue
                 # this segment broke
                 err = " | ".join(cur.errors[-3:]) or "(no output)"
+                if RELAY:
+                    err = RELAY.unwrap_text(err)
                 log.warning("[%s] ffmpeg exited %s: %s", cid, code,
                             re.sub(r"https://[^ ]*googlevideo\.com/\S+", "<YouTube stream>", err))
                 played = (time.monotonic() - cur.first) if cur.first else 0.0
@@ -2727,7 +2842,7 @@ def refresher(catalog):
 
 
 def main():
-    global CACHE_DIR, FFMPEG
+    global CACHE_DIR, FFMPEG, RELAY
     ap = argparse.ArgumentParser(description="Serve spelunkr.tv channels as M3U + XMLTV live TV for Jellyfin.")
     ap.add_argument("--host", default="0.0.0.0", help="address to listen on (default 0.0.0.0)")
     ap.add_argument("--port", type=int, default=8765)
@@ -2766,6 +2881,10 @@ def main():
     ap.add_argument("--ffmpeg", default=find_tool("ffmpeg"),
                     help="ffmpeg to use (default: on PATH, else Jellyfin's copy on Windows)")
     ap.add_argument("--ffprobe", default=find_tool("ffprobe"))
+    ap.add_argument("--relay", choices=["auto", "on", "off"], default="auto",
+                    help="download videos in Python and hand them to ffmpeg locally, instead of ffmpeg opening "
+                         "web addresses itself. auto (default): only if this ffmpeg can't look up web addresses, "
+                         "as with the static builds often used on seedboxes")
     ap.add_argument("--log-file", help="also write the log to this file (kept under ~10 MB)")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args()
@@ -2817,6 +2936,16 @@ def main():
     for tool in (a.ffmpeg, a.ffprobe):
         if not shutil.which(tool):
             sys.exit("can't find %s - install ffmpeg (or point --ffmpeg/--ffprobe at Jellyfin's copy)" % tool)
+    if a.relay != "off":
+        relay = Relay()
+        if a.relay == "on":
+            RELAY = relay
+            log.info("ffmpeg reads videos through the local relay")
+        elif not ffmpeg_resolves_names(a.ffmpeg, relay):
+            RELAY = relay
+            log.info("this ffmpeg can't look up web addresses by itself - it reads videos through the local relay")
+        else:
+            relay.close()
     retro = find_font([a.font] if a.font else [], RETRO_FONTS)
     fonts = (retro, find_font(RETRO_SMALL_FONTS) or retro, find_font(PLAIN_FONTS))
     if not any(fonts):
