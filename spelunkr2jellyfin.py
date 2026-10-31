@@ -1761,7 +1761,7 @@ class _LiveChannel:
                             q.put_nowait(data)
                         except queue.Full:                  # a viewer that stopped reading: drop it
                             del self.subs[q]
-                            q.put(None)
+                            _hang_up(q)
                     self.pos += len(chunk)
         finally:
             self.close()
@@ -1804,11 +1804,22 @@ class _LiveChannel:
             pass
         with self.lock:
             for q in self.subs:
-                try:
-                    q.put_nowait(None)
-                except queue.Full:
-                    pass
+                _hang_up(q)
             self.subs.clear()
+
+
+def _hang_up(q):
+    """Tell a viewer the stream has ended, without ever waiting on it: if its queue is full
+    (it stopped reading), throw away what it hasn't read to make room."""
+    while True:
+        try:
+            q.put_nowait(None)
+            return
+        except queue.Full:
+            try:
+                q.get_nowait()
+            except queue.Empty:
+                pass
 
 
 class _Pending:
@@ -2763,6 +2774,8 @@ class Handler(BaseHTTPRequestHandler):
                 if head_only:
                     return
                 log.info("tune-in: %s from %s", cid, self.client_address[0])
+                # a player that stops reading but never hangs up is let go after a minute
+                self.connection.settimeout(60)
                 self.streamer.stream(cid, self.wfile)
                 log.info("tune-out: %s from %s", cid, self.client_address[0])
                 return
