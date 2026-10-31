@@ -188,7 +188,9 @@ class Relay:
         self.server.daemon_threads = True
         self.port = self.server.server_address[1]
         self.prefix = "http://127.0.0.1:%d/%s/" % (self.port, self.key)
-        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+        # Short poll so close() returns at once when the relay turns out not to be needed
+        threading.Thread(target=self.server.serve_forever, kwargs={"poll_interval": 0.05},
+                         daemon=True).start()
 
     def close(self):
         self.server.shutdown()
