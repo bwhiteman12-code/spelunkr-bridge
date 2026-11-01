@@ -879,6 +879,9 @@ class Catalog:
         self._refresh_soon = False
         self._desc_tried = set()
         self._tape_cuts, self._tape_queue, self._tape_busy = {}, [], False   # archive.org commercial tapes
+        self._subs_index = {}     # subtitle key -> spelunkr.tv's entry for a tape that has English subtitles
+        self._subs_cues = OrderedDict()   # subtitle file -> its cues (the last few used)
+        self._subs_warned = False
 
     def mark_unplayable_done(self):
         """After marking videos unplayable in bulk: rebuild the lineup once, in the background."""
@@ -926,6 +929,7 @@ class Catalog:
         global AUDIO_BASE
         if isinstance(lineup.get("audioBase"), str) and lineup["audioBase"]:
             AUDIO_BASE = lineup["audioBase"]
+        self._load_subtitle_index(lineup.get("subtitles"))
         chans, vers = [], {}
         for c in lineup.get("channels", []):
             cid = c["id"]
@@ -968,6 +972,61 @@ class Catalog:
             self.channels, self.versions = chans, vers
         extra = len(chans) - n_spelunkr
         log.info("lineup loaded: %d channels%s", len(chans), " (%d custom)" % extra if extra else "")
+
+    # -- subtitles ---------------------------------------------------------------
+
+    def _subs_unknown(self, what):
+        if not self._subs_warned:
+            self._subs_warned = True
+            log.warning("subtitles: spelunkr.tv changed how it publishes them (%s) - showing none until "
+                        "this script is updated", what)
+
+    def _load_subtitle_index(self, path):
+        """spelunkr.tv's list of tapes that have English subtitles. Same checks as the website:
+        anything it doesn't recognise is left out, so a format change means no subtitles, never a broken stream."""
+        if path is None:
+            self._subs_index = {}
+            return
+        if not isinstance(path, str) or not SUB_INDEX_RE.match(path):
+            self._subs_unknown("index name %r" % path)
+            self._subs_index = {}
+            return
+        try:
+            idx = fetch_broadcast(path, immutable=True)
+        except Exception as e:
+            log.warning("subtitles: the list couldn't be read, keeping the last one (%s)", e)
+            return
+        if not isinstance(idx, dict) or idx.get("format") != SUB_FORMAT or not isinstance(idx.get("tapes"), dict):
+            self._subs_unknown("index format %r" % (idx.get("format") if isinstance(idx, dict) else None))
+            self._subs_index = {}
+            return
+        self._subs_index = {k: v for k, v in idx["tapes"].items()
+                            if isinstance(k, str) and k.strip() and isinstance(v, dict)
+                            and isinstance(v.get("file"), str) and SUB_FILE_RE.match(v["file"])
+                            and v.get("source") in ("machine", "archive")}
+
+    def subtitles(self, ident, file):
+        """English subtitle cues for one archive.org file (times in ms from the start of the file), or None."""
+        ent = self._subs_index.get(subtitle_key(ident, file))
+        if not ent:
+            return None
+        name = ent["file"]
+        if name in self._subs_cues:
+            self._subs_cues.move_to_end(name)
+            return self._subs_cues[name]
+        try:
+            data = fetch_broadcast(name, immutable=True)
+        except Exception as e:
+            log.warning("subtitles for %s couldn't be read: %s", ident, e)
+            return None
+        cues = parse_cues(data)
+        if cues is None:
+            self._subs_unknown("subtitle file format %r" % (data.get("format") if isinstance(data, dict) else None))
+            return None
+        self._subs_cues[name] = cues
+        while len(self._subs_cues) > 16:
+            self._subs_cues.popitem(last=False)
+        return cues
 
     # -- custom channels from channels.json --------------------------------------
 
@@ -1633,6 +1692,126 @@ def needs_plain_font(text):
     return any(ord(c) > 0x2FFF for c in text)
 
 
+# Subtitles: spelunkr.tv publishes English subtitles for some tapes (machine-translated Japanese, mostly).
+# The bridge draws them onto the picture, the way the website shows them over its player.
+SUB_FORMAT = 1
+SUB_INDEX_RE = re.compile(r"^subtitles/index-[0-9a-f]{16}\.json$")
+SUB_FILE_RE = re.compile(r"^subtitles/[0-9a-f]{16}\.json$")
+SUB_MAX_CHARS = 84
+
+
+def subtitle_key(ident, file):
+    """How spelunkr.tv names a file's subtitles: "<archive.org id>/<file name, punctuation as dashes>"."""
+    if not ident:
+        return None
+    if not file:
+        return ident
+    stem = re.sub(r"[^A-Za-z0-9]+", "-", re.sub(r"\.[^.]+$", "", file)).strip("-")[:120]
+    return "%s/%s" % (ident, stem)
+
+
+def parse_cues(data):
+    """The cues of a subtitle file, sorted, keeping only ones the website would show; None if the
+    file is in a format this script doesn't know."""
+    if not isinstance(data, dict) or data.get("format") != SUB_FORMAT or not isinstance(data.get("cues"), list):
+        return None
+    out = []
+    for c in data["cues"]:
+        if not isinstance(c, dict) or not is_int(c.get("t0")) or not is_int(c.get("t1")) or c["t0"] < 0 \
+                or c["t1"] <= c["t0"] or c.get("kind") not in ("line", "beat", "mark"):
+            continue
+        en = c.get("en")
+        if c["kind"] != "mark" and not (isinstance(en, str) and en.strip() and len(en) <= SUB_MAX_CHARS):
+            continue
+        cue = {"t0": c["t0"], "t1": c["t1"], "kind": c["kind"], "en": en if c["kind"] != "mark" else "[…]"}
+        spans = c.get("spans")
+        if c["kind"] == "line" and isinstance(spans, list) and spans and all(
+                isinstance(s, dict) and is_int(s.get("at")) and re.match(r"^#[0-9a-f]{6}$", str(s.get("color")))
+                for s in spans) and spans[0]["at"] == 0 and all(
+                spans[i]["at"] > spans[i - 1]["at"] for i in range(1, len(spans))) and spans[-1]["at"] < len(en):
+            cue["spans"] = spans
+        out.append(cue)
+    return sorted(out, key=lambda c: c["t0"])
+
+
+def _ass_text(text):
+    return text.replace("\\", "/").replace("{", "(").replace("}", ")").replace("\n", " ")
+
+
+def _ass_color(hex_color):
+    r, g, b = hex_color[1:3], hex_color[3:5], hex_color[5:7]
+    return "&H%s%s%s&" % (b, g, r)
+
+
+def _dark(hex_color):
+    lin = [(v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4)
+           for v in (int(hex_color[i:i + 2], 16) / 255 for i in (1, 3, 5))]
+    return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2] < 0.1
+
+
+def build_ass(cues, start_ms, dur_ms, w, h, font):
+    """An .ass subtitle file for one clip: the cues that fall between start_ms and start_ms + dur_ms
+    of the tape, timed from the clip's first frame. Like the website, one caption at a time: white on a
+    dark box near the bottom; "beat" and "mark" captions in gold italics. None if nothing is said."""
+    end_ms = start_ms + dur_ms
+    events = []
+    for i, c in enumerate(cues):
+        t1 = min(c["t1"], cues[i + 1]["t0"]) if i + 1 < len(cues) else c["t1"]   # one caption at a time
+        if t1 <= start_ms or c["t0"] >= end_ms or t1 <= c["t0"]:
+            continue
+        if c.get("spans"):
+            parts = []
+            for j, s in enumerate(c["spans"]):
+                piece = c["en"][s["at"]:c["spans"][j + 1]["at"] if j + 1 < len(c["spans"]) else None]
+                color = "#ffffff" if _dark(s["color"]) else s["color"]   # the box is dark: keep it readable
+                parts.append("{\\c%s}%s" % (_ass_color(color), _ass_text(piece)))
+            text = "".join(parts)
+        elif c["kind"] == "line":
+            text = _ass_text(c["en"])
+        else:
+            text = "{\\c%s\\i1}%s" % (_ass_color(GOLD), _ass_text(c["en"]))
+        events.append((max(0, c["t0"] - start_ms), min(t1, end_ms) - start_ms, text))
+    if not events:
+        return None
+
+    def ts(ms):
+        cs = ms // 10
+        return "%d:%02d:%02d.%02d" % (cs // 360000, cs // 6000 % 60, cs // 100 % 60, cs % 100)
+
+    size = max(12, round(h * 0.046))
+    return "\n".join([
+        "[Script Info]", "ScriptType: v4.00+", "PlayResX: %d" % w, "PlayResY: %d" % h,
+        "WrapStyle: 0", "ScaledBorderAndShadow: yes", "",
+        "[V4+ Styles]",
+        "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, "
+        "Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, "
+        "MarginL, MarginR, MarginV, Encoding",
+        "Style: Default,%s,%d,&H00FFFFFF,&H00FFFFFF,&H40000000,&H40000000,-1,0,0,0,100,100,0,0,3,%d,0,2,%d,%d,%d,1"
+        % (font, size, max(2, size // 6), round(w * 0.05), round(w * 0.05), round(h * 0.06)),
+        "", "[Events]",
+        "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
+    ] + ["Dialogue: 0,%s,%s,Default,,0,0,0,,%s" % (ts(a), ts(b), t) for a, b, t in events]) + "\n"
+
+
+def ass_font_name(path):
+    """The font family libass should look for, from the plain font's file name."""
+    p = (path or "").lower()
+    if "dejavu" in p:
+        return "DejaVu Sans"
+    if "arial" in p:
+        return "Arial"
+    return "Sans"
+
+
+def ffmpeg_has_filter(ffmpeg, name):
+    try:
+        out = subprocess.run([ffmpeg, "-hide_banner", "-filters"], capture_output=True, text=True,
+                             timeout=20, **NO_WINDOW).stdout
+    except Exception:
+        return False
+    return any(line.split()[1:2] == [name] for line in out.splitlines() if line.strip())
+
+
 def ff_path(p):
     return "'%s'" % p.replace("\\", "/").replace(":", "\\:").replace("'", "\\'")
 
@@ -1917,7 +2096,12 @@ class Streamer:
         self.w, self.h = width, height
         self.preset, self.maxrate = preset, maxrate
         self.font, self.font_small, self.font_plain = fonts
-        self.lead = lead                               # extra seconds ahead, to cancel out player buffering
+        self.subs_state = {"on": False}                # draw spelunkr.tv's subtitles (main() turns this on;
+                                                       # shared with sized() copies so turning off reaches all)
+        self.sub_font = ass_font_name(self.font_plain)
+        # where libass finds that font (on Windows it asks the system instead: scanning the whole Fonts folder is slow)
+        self.sub_fontsdir = os.path.dirname(self.font_plain) if self.font_plain and not WINDOWS else None
+        self.lead = lead                              # extra seconds ahead, to cancel out player buffering
         self.hw = hw                                   # e.g. ("qsv", "/dev/dri/renderD129") or ("nvenc", None)
         self.bug = bug                                 # small channel logo in the corner during shows
         self.static = static                           # TV snow while a channel tunes in
@@ -2095,9 +2279,27 @@ class Streamer:
 
     # -- one ffmpeg command per kind of segment ---------------------------------
 
-    def clip_cmd(self, url, seek, duration, ts_offset, gain_db=0, audio_url=None, bug=None, vhs=False):
+    def _subs_file(self, ident, file, seek, duration, tmp):
+        """Write the subtitles for this stretch of a tape to an .ass file; None if it has none."""
+        if not (self.subs_state["on"] and tmp and ident and file):
+            return None
+        cues = self.catalog.subtitles(ident, file)
+        text = build_ass(cues, int(seek * 1000), int(duration * 1000), self.w, self.h, self.sub_font) if cues else None
+        if not text:
+            return None
+        path = os.path.join(tmp, "subtitles.ass")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+        return path
+
+    def clip_cmd(self, url, seek, duration, ts_offset, gain_db=0, audio_url=None, bug=None, vhs=False, subs=None):
         """A tape or video. `bug` is a logo image to show faintly in the corner (during shows);
-        `vhs` runs the picture (logo included, like a taped broadcast) through the worn-tape look."""
+        `vhs` runs the picture (logo included, like a taped broadcast) through the worn-tape look;
+        `subs` is an .ass file of subtitles, drawn on last so they stay crisp."""
+        sf = ""
+        if subs:
+            sf = ",ass=filename=%s" % ff_path(subs) + (":fontsdir=%s" % ff_path(self.sub_fontsdir)
+                                                       if self.sub_fontsdir else "")
         audio = self.has_audio(url)
         cmd = self._head() + self._net_in(url, seek)
         n = 1
@@ -2118,16 +2320,16 @@ class Streamer:
                      "[base][bug]overlay=W-w-%d:H-h-%d:shortest=1,format=yuv420p[pre]"
                      % (self._fit(tail=False), n, size, size, margin, margin))
             if vhs:
-                graph += ";" + self._vhs_graph("pre", "post") + ";[post]null%s[vout]" % self._tail()
+                graph += ";" + self._vhs_graph("pre", "post") + ";[post]null%s%s[vout]" % (sf, self._tail())
             else:
-                graph += ";[pre]null%s[vout]" % self._tail()
+                graph += ";[pre]null%s%s[vout]" % (sf, self._tail())
             cmd += ["-filter_complex", graph, "-map", "[vout]", "-map", amap]
         elif vhs:
             graph = ("[0:v:0]%s[pre];" % self._fit(tail=False) + self._vhs_graph("pre", "post")
-                     + ";[post]null%s[vout]" % self._tail())
+                     + ";[post]null%s%s[vout]" % (sf, self._tail()))
             cmd += ["-filter_complex", graph, "-map", "[vout]", "-map", amap]
         else:
-            cmd += ["-map", "0:v:0", "-map", amap, "-vf", self._fit()]
+            cmd += ["-map", "0:v:0", "-map", amap, "-vf", self._fit(tail=False) + sf + self._tail()]
         if af:
             cmd += ["-af", af]
         return cmd + ["-t", "%.3f" % duration] + self._out(ts_offset)
@@ -2317,11 +2519,14 @@ class Streamer:
                 urls = self.youtube_urls(it["id"])
                 return self.clip_cmd(urls[0], seek, remaining, ts_offset,
                                      audio_url=urls[1] if len(urls) > 1 else None, bug=bug, vhs=vhs)
-            return self.clip_cmd(self.catalog.item_url(it), seek, remaining, ts_offset, bug=bug, vhs=vhs)
+            subs = self._subs_file(it.get("id"), it.get("file"), seek, remaining, tmp)
+            return self.clip_cmd(self.catalog.item_url(it), seek, remaining, ts_offset, bug=bug, vhs=vhs, subs=subs)
         if kind == "ad":
             s = e["slice"]
-            return self.clip_cmd(archive_url(s["tape"], s["file"]), (s.get("inMs", 0)) / 1000 + offset,
-                                 remaining, ts_offset, s.get("gainDb", 0), vhs="ads" in self.vhs)
+            seek = (s.get("inMs", 0)) / 1000 + offset
+            subs = self._subs_file(s.get("tape"), s.get("file"), seek, remaining, tmp)
+            return self.clip_cmd(archive_url(s["tape"], s["file"]), seek,
+                                 remaining, ts_offset, s.get("gainDb", 0), vhs="ads" in self.vhs, subs=subs)
         channel = self.catalog.channel(cid) or {"id": cid, "name": cid}
         if kind == "up-next":
             return self.upnext_cmd(tmp, channel, e, start, offset, remaining, ts_offset)
@@ -2386,7 +2591,8 @@ class Streamer:
                 self.catalog.mark_unplayable(it["id"], str(ex))
             dur = min(dur, 20.0)
             cmd = self.standby_cmd(dur, ts)
-        log.info("[%s] %s  (+%ds, %ds)", cid, self.describe(ver, e), int((t - start) / 1000), int(dur))
+        log.info("[%s] %s  (+%ds, %ds)%s", cid, self.describe(ver, e), int((t - start) / 1000), int(dur),
+                 "  [subtitles]" if any(",ass=" in a for a in cmd) else "")
         return _Segment(cmd, tmp, t, dur, ts, self._kind(ver, e))
 
     def _segments(self, cid, sink, stop):
@@ -2487,6 +2693,14 @@ class Streamer:
                         cur = self._launch(cid, None, cur.ts + played + TS_GAP)
                         switched = time.monotonic()
                         continue
+                if self.subs_state["on"] and any(a.startswith("ass=") or ",ass=" in a for a in cur.cmd) \
+                        and re.search(r"libass|\bass\b|subtitle|font", err, re.I):
+                    # never let subtitles cost the picture: turn them off and carry on without
+                    log.warning("[%s] drawing subtitles failed, turning them off: %s", cid, err[:200])
+                    self.subs_state["on"] = False
+                    cur = self._launch(cid, None, cur.ts + played + TS_GAP)
+                    switched = time.monotonic()
+                    continue
                 # colour bars for the rest of that tape (20s at most); the next launch rejoins the live schedule
                 bars = min(max(cur.dur - played, 1.0), 20.0)
                 cur = _Segment(self.standby_cmd(bars, cur.ts + played + TS_GAP), None,
@@ -2920,6 +3134,8 @@ def main():
     ap.add_argument("--no-logo-bug", action="store_true", help="don't show the channel logo in the corner during shows")
     ap.add_argument("--no-static", action="store_true", help="don't show TV snow while a channel tunes in")
     ap.add_argument("--no-vhs-cards", action="store_true", help="draw bump cards clean instead of as worn VHS")
+    ap.add_argument("--no-subtitles", action="store_true",
+                    help="don't draw spelunkr.tv's English subtitles on the tapes that have them")
     ap.add_argument("--ffmpeg", default=find_tool("ffmpeg"),
                     help="ffmpeg to use (default: on PATH, else Jellyfin's copy on Windows)")
     ap.add_argument("--ffprobe", default=find_tool("ffprobe"))
@@ -3003,6 +3219,11 @@ def main():
     Handler.streamer = Streamer(catalog, a.ffmpeg, a.ffprobe, w, h, a.preset, a.maxrate, fonts, a.lead,
                                 hw=hw, bug=not a.no_logo_bug, static=not a.no_static,
                                 vhs_cards=not a.no_vhs_cards)
+    if not a.no_subtitles:
+        if ffmpeg_has_filter(a.ffmpeg, "ass"):
+            Handler.streamer.subs_state["on"] = True
+        else:
+            log.info("this ffmpeg can't draw subtitles (it has no libass) - tapes play without them")
     Handler.public_url = public
     Handler.hours_ahead = a.hours
     Handler.tuners = max(1, a.tuners)
