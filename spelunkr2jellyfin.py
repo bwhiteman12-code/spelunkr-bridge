@@ -1749,10 +1749,16 @@ def _dark(hex_color):
     return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2] < 0.1
 
 
-def build_ass(cues, start_ms, dur_ms, w, h, font):
+def build_ass(cues, start_ms, dur_ms, w, h, font, retro=False):
     """An .ass subtitle file for one clip: the cues that fall between start_ms and start_ms + dur_ms
     of the tape, timed from the clip's first frame. Like the website, one caption at a time: white on a
-    dark box near the bottom; "beat" and "mark" captions in gold italics. None if nothing is said."""
+    dark box near the bottom; "beat" and "mark" captions in gold italics. None if nothing is said.
+    `retro`: the font is the bundled retro one, so swap out characters it has no glyphs for."""
+    if retro:
+        _plain = _ass_text
+        _ass_text_ = lambda s: _plain(s.translate(RETRO_SWAPS).replace("…", "..."))
+    else:
+        _ass_text_ = _ass_text
     end_ms = start_ms + dur_ms
     events = []
     for i, c in enumerate(cues):
@@ -1764,12 +1770,12 @@ def build_ass(cues, start_ms, dur_ms, w, h, font):
             for j, s in enumerate(c["spans"]):
                 piece = c["en"][s["at"]:c["spans"][j + 1]["at"] if j + 1 < len(c["spans"]) else None]
                 color = "#ffffff" if _dark(s["color"]) else s["color"]   # the box is dark: keep it readable
-                parts.append("{\\c%s}%s" % (_ass_color(color), _ass_text(piece)))
+                parts.append("{\\c%s}%s" % (_ass_color(color), _ass_text_(piece)))
             text = "".join(parts)
         elif c["kind"] == "line":
-            text = _ass_text(c["en"])
+            text = _ass_text_(c["en"])
         else:
-            text = "{\\c%s\\i1}%s" % (_ass_color(GOLD), _ass_text(c["en"]))
+            text = "{\\c%s\\i1}%s" % (_ass_color(GOLD), _ass_text_(c["en"]))
         events.append((max(0, c["t0"] - start_ms), min(t1, end_ms) - start_ms, text))
     if not events:
         return None
@@ -2098,9 +2104,17 @@ class Streamer:
         self.font, self.font_small, self.font_plain = fonts
         self.subs_state = {"on": False}                # draw spelunkr.tv's subtitles (main() turns this on;
                                                        # shared with sized() copies so turning off reaches all)
-        self.sub_font = ass_font_name(self.font_plain)
-        # where libass finds that font (on Windows it asks the system instead: scanning the whole Fonts folder is slow)
-        self.sub_fontsdir = os.path.dirname(self.font_plain) if self.font_plain and not WINDOWS else None
+        # the subtitle font, and the folder libass loads it from (on Windows it asks the system instead:
+        # scanning the whole Fonts folder is slow). With no plain font installed - e.g. a bare seedbox,
+        # whose static ffmpeg can't ask the system either - use the retro font that ships with the bridge.
+        self.sub_retro = False
+        if self.font_plain:
+            self.sub_font = ass_font_name(self.font_plain)
+            self.sub_fontsdir = os.path.dirname(self.font_plain) if not WINDOWS else None
+        elif self.font:
+            self.sub_font, self.sub_fontsdir, self.sub_retro = "STAR 4", os.path.dirname(self.font), True
+        else:
+            self.sub_font, self.sub_fontsdir = "Sans", None
         self.lead = lead                              # extra seconds ahead, to cancel out player buffering
         self.hw = hw                                   # e.g. ("qsv", "/dev/dri/renderD129") or ("nvenc", None)
         self.bug = bug                                 # small channel logo in the corner during shows
@@ -2284,7 +2298,8 @@ class Streamer:
         if not (self.subs_state["on"] and tmp and ident and file):
             return None
         cues = self.catalog.subtitles(ident, file)
-        text = build_ass(cues, int(seek * 1000), int(duration * 1000), self.w, self.h, self.sub_font) if cues else None
+        text = build_ass(cues, int(seek * 1000), int(duration * 1000), self.w, self.h, self.sub_font,
+                         retro=self.sub_retro) if cues else None
         if not text:
             return None
         path = os.path.join(tmp, "subtitles.ass")
