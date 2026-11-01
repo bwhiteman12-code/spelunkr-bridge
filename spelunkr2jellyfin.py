@@ -1857,6 +1857,8 @@ class _Segment:
         self.first = None
         self.sent = 0
         self.launched = time.monotonic()
+        self.last = None               # when it last sent anything
+        self.given_up = False
         self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                      stdin=subprocess.DEVNULL, cwd=tmp, **NO_WINDOW)
         threading.Thread(target=self._read, daemon=True).start()
@@ -1868,8 +1870,9 @@ class _Segment:
                 chunk = self.proc.stdout.read(65536)
                 if not chunk:
                     break
+                self.last = time.monotonic()
                 if self.first is None:
-                    self.first = time.monotonic()
+                    self.first = self.last
                 self.sent += len(chunk)
                 self.q.put(chunk)
         finally:
@@ -1879,6 +1882,18 @@ class _Segment:
         for line in self.proc.stderr:
             self.errors.append(line.decode("utf-8", "replace").rstrip())
             del self.errors[:-20]
+
+    def stuck(self):
+        """Why this ffmpeg should be given up on, or None while it's doing its job.
+        (A broken download or GPU hiccup can leave ffmpeg spinning forever without finishing.)"""
+        now = time.monotonic()
+        if self.first is None:
+            return "no picture after %ds" % (now - self.launched) if now - self.launched > 60 else None
+        if now - self.last > 30:
+            return "nothing sent for %ds" % (now - self.last)
+        if now - self.first > self.dur + 60:
+            return "still going %ds past the end of a %ds clip" % (now - self.first - self.dur, self.dur)
+        return None
 
     def cleanup(self):
         if self.tmp:
@@ -2323,7 +2338,11 @@ class Streamer:
         log.info("[%s] viewers: %d", cid, ch.viewers())
         try:
             while True:
-                chunk = q.get()
+                try:
+                    chunk = q.get(timeout=90)
+                except queue.Empty:         # the channel has gone silent: let the player go and retry
+                    log.warning("[%s] no video for 90s, dropping the viewer", cid)
+                    break
                 if chunk is None:
                     break
                 wfile.write(chunk)
@@ -2396,6 +2415,14 @@ class Streamer:
                         chunk = cur.q.get(timeout=0.2)
                     except queue.Empty:
                         chunk = b""
+                        why = None if cur.given_up else cur.stuck()
+                        if why:             # stop it; the code below puts colour bars up and moves on
+                            log.warning("[%s] ffmpeg stuck (%s) - stopping it", cid, why)
+                            cur.given_up = True
+                            try:
+                                cur.proc.kill()
+                            except OSError:
+                                pass
                     if chunk is None:
                         break
                     if chunk:
