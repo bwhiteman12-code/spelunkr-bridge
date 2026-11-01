@@ -1792,7 +1792,9 @@ def build_ass(cues, start_ms, dur_ms, w, h, font, retro=False):
         "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, "
         "Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, "
         "MarginL, MarginR, MarginV, Encoding",
-        "Style: Default,%s,%d,&H00FFFFFF,&H00FFFFFF,&H40000000,&H40000000,-1,0,0,0,100,100,0,0,3,%d,0,2,%d,%d,%d,1"
+        # a solid box: each line of a two-line caption gets its own box, and see-through boxes would
+        # show a darker strip where they overlap; solid ones merge into one shape, like TV captions
+        "Style: Default,%s,%d,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,3,%d,0,2,%d,%d,%d,1"
         % (font, size, max(2, size // 6), round(w * 0.05), round(w * 0.05), round(h * 0.06)),
         "", "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
