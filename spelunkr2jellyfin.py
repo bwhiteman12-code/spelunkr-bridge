@@ -881,6 +881,8 @@ class Catalog:
         self._tape_cuts, self._tape_queue, self._tape_busy = {}, [], False   # archive.org commercial tapes
         self._subs_index = {}     # subtitle key -> spelunkr.tv's entry for a tape that has English subtitles
         self._subs_cues = OrderedDict()   # subtitle file -> its cues (the last few used)
+        self._subs_failed = {}            # subtitle file -> when it last couldn't be downloaded
+        self._subs_lock = threading.Lock()  # segments start in parallel threads
         self._subs_warned = False
 
     def mark_unplayable_done(self):
@@ -1011,21 +1013,27 @@ class Catalog:
         if not ent:
             return None
         name = ent["file"]
-        if name in self._subs_cues:
-            self._subs_cues.move_to_end(name)
-            return self._subs_cues[name]
+        with self._subs_lock:
+            if name in self._subs_cues:
+                self._subs_cues.move_to_end(name)
+                return self._subs_cues[name]
+            if time.time() - self._subs_failed.get(name, 0) < 600:   # don't hold up every clip retrying
+                return None
         try:
             data = fetch_broadcast(name, immutable=True)
         except Exception as e:
             log.warning("subtitles for %s couldn't be read: %s", ident, e)
+            with self._subs_lock:
+                self._subs_failed[name] = time.time()
             return None
         cues = parse_cues(data)
         if cues is None:
             self._subs_unknown("subtitle file format %r" % (data.get("format") if isinstance(data, dict) else None))
             return None
-        self._subs_cues[name] = cues
-        while len(self._subs_cues) > 16:
-            self._subs_cues.popitem(last=False)
+        with self._subs_lock:
+            self._subs_cues[name] = cues
+            while len(self._subs_cues) > 16:
+                self._subs_cues.popitem(last=False)
         return cues
 
     # -- custom channels from channels.json --------------------------------------
@@ -1107,10 +1115,13 @@ class Catalog:
                  for y in [re.search(r"\b(19[4-9]\d|20[0-2]\d)\b", str(v or ""))] if y), None)
             ff = FFMPEG or find_tool("ffmpeg")
             src = archive_url(ident, f["name"])
-            r = subprocess.run([ff, "-hide_banner", "-nostats", "-nostdin", "-i", RELAY.wrap(src) if RELAY else src,
-                                "-vf", "scale=160:-2,blackdetect=d=0.08:pix_th=0.12", "-af", "ebur128",
-                                "-f", "null", "-"], capture_output=True, text=True, encoding="utf-8",
-                               errors="replace", timeout=3 * 3600, **NO_WINDOW)
+            # a whole tape decoded at full speed: run it at the lowest priority so live channels always come first
+            nice = ["nice", "-n", "19"] if not WINDOWS and shutil.which("nice") else []
+            r = subprocess.run(nice + [ff, "-hide_banner", "-nostats", "-nostdin", "-i", RELAY.wrap(src) if RELAY else src,
+                                       "-vf", "scale=160:-2,blackdetect=d=0.08:pix_th=0.12", "-af", "ebur128",
+                                       "-f", "null", "-"], capture_output=True, text=True, encoding="utf-8",
+                               errors="replace", timeout=3 * 3600,
+                               **({"creationflags": 0x08000000 | 0x00004000} if WINDOWS else {}))  # + below normal
             err = r.stderr or ""
             bounds = sorted((float(a) + float(b)) / 2 for a, b in
                             re.findall(r"black_start:([\d.]+) black_end:([\d.]+)", err))
@@ -1749,10 +1760,16 @@ def _dark(hex_color):
     return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2] < 0.1
 
 
-def build_ass(cues, start_ms, dur_ms, w, h, font):
+def build_ass(cues, start_ms, dur_ms, w, h, font, retro=False):
     """An .ass subtitle file for one clip: the cues that fall between start_ms and start_ms + dur_ms
     of the tape, timed from the clip's first frame. Like the website, one caption at a time: white on a
-    dark box near the bottom; "beat" and "mark" captions in gold italics. None if nothing is said."""
+    dark box near the bottom; "beat" and "mark" captions in gold italics. None if nothing is said.
+    `retro`: the font is the bundled retro one, so swap out characters it has no glyphs for."""
+    if retro:
+        _plain = _ass_text
+        _ass_text_ = lambda s: _plain(s.translate(RETRO_SWAPS).replace("…", "..."))
+    else:
+        _ass_text_ = _ass_text
     end_ms = start_ms + dur_ms
     events = []
     for i, c in enumerate(cues):
@@ -1764,12 +1781,12 @@ def build_ass(cues, start_ms, dur_ms, w, h, font):
             for j, s in enumerate(c["spans"]):
                 piece = c["en"][s["at"]:c["spans"][j + 1]["at"] if j + 1 < len(c["spans"]) else None]
                 color = "#ffffff" if _dark(s["color"]) else s["color"]   # the box is dark: keep it readable
-                parts.append("{\\c%s}%s" % (_ass_color(color), _ass_text(piece)))
+                parts.append("{\\c%s}%s" % (_ass_color(color), _ass_text_(piece)))
             text = "".join(parts)
         elif c["kind"] == "line":
-            text = _ass_text(c["en"])
+            text = _ass_text_(c["en"])
         else:
-            text = "{\\c%s\\i1}%s" % (_ass_color(GOLD), _ass_text(c["en"]))
+            text = "{\\c%s\\i1}%s" % (_ass_color(GOLD), _ass_text_(c["en"]))
         events.append((max(0, c["t0"] - start_ms), min(t1, end_ms) - start_ms, text))
     if not events:
         return None
@@ -1786,7 +1803,9 @@ def build_ass(cues, start_ms, dur_ms, w, h, font):
         "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, "
         "Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, "
         "MarginL, MarginR, MarginV, Encoding",
-        "Style: Default,%s,%d,&H00FFFFFF,&H00FFFFFF,&H40000000,&H40000000,-1,0,0,0,100,100,0,0,3,%d,0,2,%d,%d,%d,1"
+        # a solid box: each line of a two-line caption gets its own box, and see-through boxes would
+        # show a darker strip where they overlap; solid ones merge into one shape, like TV captions
+        "Style: Default,%s,%d,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,3,%d,0,2,%d,%d,%d,1"
         % (font, size, max(2, size // 6), round(w * 0.05), round(w * 0.05), round(h * 0.06)),
         "", "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
@@ -1801,6 +1820,11 @@ def ass_font_name(path):
     if "arial" in p:
         return "Arial"
     return "Sans"
+
+
+def has_subs(cmd):
+    """Does this ffmpeg command draw subtitles?"""
+    return any(",ass=" in a for a in cmd)
 
 
 def ffmpeg_has_filter(ffmpeg, name):
@@ -2098,9 +2122,17 @@ class Streamer:
         self.font, self.font_small, self.font_plain = fonts
         self.subs_state = {"on": False}                # draw spelunkr.tv's subtitles (main() turns this on;
                                                        # shared with sized() copies so turning off reaches all)
-        self.sub_font = ass_font_name(self.font_plain)
-        # where libass finds that font (on Windows it asks the system instead: scanning the whole Fonts folder is slow)
-        self.sub_fontsdir = os.path.dirname(self.font_plain) if self.font_plain and not WINDOWS else None
+        # the subtitle font, and the folder libass loads it from (on Windows it asks the system instead:
+        # scanning the whole Fonts folder is slow). With no plain font installed - e.g. a bare seedbox,
+        # whose static ffmpeg can't ask the system either - use the retro font that ships with the bridge.
+        self.sub_retro = False
+        if self.font_plain:
+            self.sub_font = ass_font_name(self.font_plain)
+            self.sub_fontsdir = os.path.dirname(self.font_plain) if not WINDOWS else None
+        elif self.font:
+            self.sub_font, self.sub_fontsdir, self.sub_retro = "STAR 4", os.path.dirname(self.font), True
+        else:
+            self.sub_font, self.sub_fontsdir = "Sans", None
         self.lead = lead                              # extra seconds ahead, to cancel out player buffering
         self.hw = hw                                   # e.g. ("qsv", "/dev/dri/renderD129") or ("nvenc", None)
         self.bug = bug                                 # small channel logo in the corner during shows
@@ -2284,7 +2316,8 @@ class Streamer:
         if not (self.subs_state["on"] and tmp and ident and file):
             return None
         cues = self.catalog.subtitles(ident, file)
-        text = build_ass(cues, int(seek * 1000), int(duration * 1000), self.w, self.h, self.sub_font) if cues else None
+        text = build_ass(cues, int(seek * 1000), int(duration * 1000), self.w, self.h, self.sub_font,
+                         retro=self.sub_retro) if cues else None
         if not text:
             return None
         path = os.path.join(tmp, "subtitles.ass")
@@ -2592,7 +2625,7 @@ class Streamer:
             dur = min(dur, 20.0)
             cmd = self.standby_cmd(dur, ts)
         log.info("[%s] %s  (+%ds, %ds)%s", cid, self.describe(ver, e), int((t - start) / 1000), int(dur),
-                 "  [subtitles]" if any(",ass=" in a for a in cmd) else "")
+                 "  [subtitles]" if has_subs(cmd) else "")
         return _Segment(cmd, tmp, t, dur, ts, self._kind(ver, e))
 
     def _segments(self, cid, sink, stop):
@@ -2693,8 +2726,9 @@ class Streamer:
                         cur = self._launch(cid, None, cur.ts + played + TS_GAP)
                         switched = time.monotonic()
                         continue
-                if self.subs_state["on"] and any(a.startswith("ass=") or ",ass=" in a for a in cur.cmd) \
-                        and re.search(r"libass|\bass\b|subtitle|font", err, re.I):
+                # (only errors from the subtitle filter itself: static ffmpeg builds print a harmless
+                # "Fontconfig error" on every run, which mustn't count)
+                if self.subs_state["on"] and has_subs(cur.cmd) and re.search(r"Parsed_ass|'ass'|libass", err):
                     # never let subtitles cost the picture: turn them off and carry on without
                     log.warning("[%s] drawing subtitles failed, turning them off: %s", cid, err[:200])
                     self.subs_state["on"] = False
