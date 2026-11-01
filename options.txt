@@ -4,4 +4,5 @@
 # --no-static              # no TV snow while a channel tunes in
 # --no-logo-bug            # no channel logo in the corner during shows
 # --no-vhs-cards           # bump cards drawn clean instead of as worn VHS
+# --no-subtitles           # no English subtitles on the tapes that have them
 # --skip vacation-slides   # leave channels out (comma-separated ids)

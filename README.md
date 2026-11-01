@@ -98,6 +98,7 @@ The script re-checks the lineup every 30 minutes. Everything it downloads is sav
   - a tracking glitch that rolls through for under a second about every 41 seconds
 
   The example Hack Fraud TV channel gives its episodes the same treatment, because they're shot digitally and would otherwise look too clean. The filter runs on the CPU at SD size, so it's light even when encoding on the GPU. Turn it off for cards with `--no-vhs-cards`. In `channels.json`, `"vhs": ["shows"]` adds it to a channel's shows, and `"ads"` adds it to its commercials.
+- **Subtitles:** where spelunkr.tv has English subtitles for a tape, the bridge draws them on the picture, like the website's captions: white on a dark box near the bottom, one line at a time. Today that's most Japanese-language shows on Rocket Punch, some on OVA TV, and the Japanese commercials. Tapes without subtitles play as they are. They're drawn into the video because Jellyfin's live TV doesn't reliably pass separate subtitle tracks to every player, so they can't be switched on and off from the player. Turn them off for the whole bridge with `--no-subtitles`.
 - **Shared streams:** every TV watching the same channel shares one stream and one encode, so 4 TVs on one channel cost the same as 1. A TV that tunes in later joins at the live point. A channel stays on the air for 30 seconds after its last viewer leaves, so flipping away and back is instant.
 - **GPU encoding:** with `/dev/dri` passed into the container, the bridge encodes on an Intel GPU through Quick Sync (or VAAPI) instead of the CPU. At startup it runs a 1-second test encode and logs `encoding on the GPU: Intel Quick Sync on /dev/dri/renderD128`. If the GPU doesn't work, it logs why and uses the CPU. Use `--gpu-device` to pick the same render node Jellyfin uses.
 - **Episode descriptions:** YouTube episodes get their real descriptions in the guide (just the first paragraph, without the links and plugs). These are fetched in the background a batch at a time after the first start, and saved.
@@ -105,13 +106,14 @@ The script re-checks the lineup every 30 minutes. Everything it downloads is sav
 
 ### Turning the extras off
 
-The TV static, the corner logo and the VHS-style bump cards are on for every channel by default. Each has an option to turn it off:
+The TV static, the corner logo, the VHS-style bump cards and the subtitles are on for every channel by default. Each has an option to turn it off:
 
 | Option | Turns off |
 |---|---|
 | `--no-static` | the TV snow while a channel tunes in |
 | `--no-logo-bug` | the channel logo in the corner during shows |
 | `--no-vhs-cards` | the worn-VHS look on bump cards (they're drawn clean) |
+| `--no-subtitles` | English subtitles on the tapes that have them |
 
 **Windows:**
 1. Open `options.txt` in the Spelunkr Bridge folder with Notepad.
@@ -423,6 +425,7 @@ python spelunkr2jellyfin.py --help
   --no-static               skip the tune-in TV snow
   --no-logo-bug             skip the corner channel logo
   --no-vhs-cards            draw bump cards clean instead of as worn VHS
+  --no-subtitles            don't draw spelunkr.tv's English subtitles
   --only suplex,primetime   only these channels
   --skip vacation-slides    leave channels out
   --font FILE               font for bump cards
@@ -437,6 +440,7 @@ python spelunkr2jellyfin.py --help
 
 - **New channels, new playlists, new bumps, new commercials:** these show up automatically.
 - **A change to the scheduler itself:** Spelunkr marks each playlist with a scheduler version (currently 5). If a newer version appears, the log warns `uses scheduler engine N, which this script doesn't know yet`. The channels keep working, but timing may drift from the website until the script is updated.
+- **Subtitles:** Spelunkr marks its subtitle files with a format version (currently 1). If it changes, the log warns `subtitles: spelunkr.tv changed how it publishes them` and tapes play without subtitles until the script is updated. The picture is never affected. If drawing subtitles ever makes ffmpeg fail, the bridge turns them off and carries on.
 - **Data files move:** if Spelunkr moves their schedule files, update `BROADCAST` at the top of the script.
 
 ## Notes
