@@ -48,7 +48,9 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from xml.sax.saxutils import escape as xml_escape
 
-BROADCAST = "https://jbuopkuluyfjwgsrigry.supabase.co/storage/v1/object/public/broadcast/"
+# spelunkr.tv's published schedule files (lineup, playlists, subtitles). They moved from Supabase to
+# Cloudflare in November 2026; --data-url overrides this if they ever move again.
+BROADCAST = "https://data.spelunkr.tv/"
 AUDIO_BASE = "https://audio.spelunkr.tv/bumps/"
 USER_AGENT = "spelunkr2jellyfin/2.0 (personal Jellyfin bridge)"
 ENGINE_VERSIONS = {1, 2, 5}      # scheduler versions this port understands
@@ -3132,7 +3134,7 @@ def refresher(catalog):
 
 
 def main():
-    global CACHE_DIR, FFMPEG, RELAY
+    global CACHE_DIR, FFMPEG, RELAY, BROADCAST
     ap = argparse.ArgumentParser(description="Serve spelunkr.tv channels as M3U + XMLTV live TV for Jellyfin.")
     ap.add_argument("--host", default="0.0.0.0", help="address to listen on (default 0.0.0.0)")
     ap.add_argument("--port", type=int, default=8765)
@@ -3152,6 +3154,7 @@ def main():
     ap.add_argument("--include-hidden", action="store_true", help="also include 'coming soon' / debug channels")
     ap.add_argument("--font", help="font file for bump cards (default: star4000.ttf next to the script, else DejaVu/Arial; "
                                    "star4000-large.ttf is used for small print)")
+    ap.add_argument("--data-url", help="where spelunkr.tv publishes its schedule files (default %s)" % BROADCAST)
     ap.add_argument("--cache", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache"),
                     help="folder for saved schedule files (default: ./cache next to the script)")
     ap.add_argument("--channels", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "channels.json"),
@@ -3194,6 +3197,8 @@ def main():
         CACHE_DIR = a.cache
     except OSError as e:
         log.warning("can't use cache folder %s: %s", a.cache, e)
+    if a.data_url:
+        BROADCAST = a.data_url.rstrip("/") + "/"
     FFMPEG = a.ffmpeg
     split = lambda s: [x.strip() for x in s.split(",") if x.strip()] if s else None
     catalog = Catalog(a.include_hidden, split(a.only), split(a.skip), a.channels)

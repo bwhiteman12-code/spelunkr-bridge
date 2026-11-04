@@ -433,6 +433,7 @@ python spelunkr2jellyfin.py --help
   --skip vacation-slides    leave channels out
   --font FILE               font for bump cards
   --cache DIR               where to save schedule files (default ./cache)
+  --data-url URL            where spelunkr.tv publishes them (default https://data.spelunkr.tv/)
   --channels FILE           your own channels (default channels.json next to the script)
   --include-hidden          also show Spelunkr channels marked coming soon
   --now [--at MS --dump N]  print what's on each channel and exit (for testing)
@@ -444,7 +445,7 @@ python spelunkr2jellyfin.py --help
 - **New channels, new playlists, new bumps, new commercials:** these show up automatically.
 - **A change to the scheduler itself:** Spelunkr marks each playlist with a scheduler version (currently 5). If a newer version appears, the log warns `uses scheduler engine N, which this script doesn't know yet`. The channels keep working, but timing may drift from the website until the script is updated.
 - **Subtitles:** Spelunkr marks its subtitle files with a format version (currently 1). If it changes, the log warns `subtitles: spelunkr.tv changed how it publishes them` and tapes play without subtitles until the script is updated. The picture is never affected. If drawing subtitles ever makes ffmpeg fail, the bridge turns them off and carries on.
-- **Data files move:** if Spelunkr moves their schedule files, update `BROADCAST` at the top of the script.
+- **Data files move:** the bridge reads Spelunkr's schedule files from `https://data.spelunkr.tv/` (they moved there from Supabase in November 2026). If they move again, point the bridge at the new place with `--data-url NEW-ADDRESS` (in Docker/Unraid, add it to Extra options), or update `BROADCAST` at the top of the script. While the files can't be reached, the bridge keeps running on its saved copies.
 
 ## Notes
 
