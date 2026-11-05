@@ -2176,6 +2176,7 @@ class Streamer:
         glitch rolling up the picture. CPU filters at SD size, so they're cheap even with GPU encoding."""
         w, h = self.w, self.h
         band = max(8, h // 48)
+        low = band + round(h * self.inset)       # with --overscan, the fuzz reaches up past the CRT's hidden edge
         return ("[%s]scale=%d:%d:flags=bilinear,scale=%d:%d:flags=bicubic,"           # ~250 lines of detail
                 "chromashift=cbh=3:crh=4:edge=smear,"                                  # colour bleed
                 "boxblur=luma_radius=0:luma_power=0:chroma_radius=2:chroma_power=2,"
@@ -2188,7 +2189,7 @@ class Streamer:
                 "[vh_f]crop=w=iw-10:h=%d:x=0:y='mod(t*120,ih-%d)',noise=c0s=60:c0f=t,"  # tracking glitch band
                 "eq=brightness=0.08[vh_g];"
                 "[vh_e][vh_g]overlay=x=10:y='mod(t*120,H-%d)':enable='lt(mod(t,41),0.8)'[%s]"
-                % (src, w * 3 // 5, h, w, h, band, band, band, band * 3, band * 3, band * 3, dst))
+                % (src, w * 3 // 5, h, w, h, low, low, low, band * 3, band * 3, band * 3, dst))
 
     # -- helpers ----------------------------------------------------------------
 
