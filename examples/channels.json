@@ -6,7 +6,7 @@
       "dial": 300,
       "color": "#E53935",
       "family": "comedy",
-      "fit": "letterbox",
+      "fit": "crop",
       "mid_break_minutes": 8,
       "description": "RedLetterMedia around the clock: Best of the Worst, re:View and Mr. Plinkett's reviews, with bump cards and 80s and 90s commercials. A fan channel, not affiliated with RedLetterMedia.",
       "youtube": {
