@@ -1762,7 +1762,7 @@ def _dark(hex_color):
     return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2] < 0.1
 
 
-def build_ass(cues, start_ms, dur_ms, w, h, font, retro=False):
+def build_ass(cues, start_ms, dur_ms, w, h, font, retro=False, inset=0.0):
     """An .ass subtitle file for one clip: the cues that fall between start_ms and start_ms + dur_ms
     of the tape, timed from the clip's first frame. Like the website, one caption at a time: white on a
     dark box near the bottom; "beat" and "mark" captions in gold italics. None if nothing is said.
@@ -1808,7 +1808,8 @@ def build_ass(cues, start_ms, dur_ms, w, h, font, retro=False):
         # a solid box: each line of a two-line caption gets its own box, and see-through boxes would
         # show a darker strip where they overlap; solid ones merge into one shape, like TV captions
         "Style: Default,%s,%d,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,3,%d,0,2,%d,%d,%d,1"
-        % (font, size, max(2, size // 6), round(w * 0.05), round(w * 0.05), round(h * 0.06)),
+        % (font, size, max(2, size // 6), round(w * (0.05 + inset)), round(w * (0.05 + inset)),
+           round(h * (0.06 + inset))),
         "", "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
     ] + ["Dialogue: 0,%s,%s,Default,,0,0,0,,%s" % (ts(a), ts(b), t) for a, b, t in events]) + "\n"
@@ -2116,7 +2117,7 @@ class _Segment:
 
 class Streamer:
     def __init__(self, catalog, ffmpeg, ffprobe, width, height, preset, maxrate, fonts, lead=0.0,
-                 hw=None, bug=True, static=True, vhs_cards=True):
+                 hw=None, bug=True, static=True, vhs_cards=True, overscan=0.0):
         self.catalog = catalog
         self.ffmpeg, self.ffprobe = ffmpeg, ffprobe
         self.w, self.h = width, height
@@ -2138,6 +2139,7 @@ class Streamer:
         self.lead = lead                              # extra seconds ahead, to cancel out player buffering
         self.hw = hw                                   # e.g. ("qsv", "/dev/dri/renderD129") or ("nvenc", None)
         self.bug = bug                                 # small channel logo in the corner during shows
+        self.inset = max(0.0, min(overscan, 20.0)) / 100   # CRTs hide the picture's edges: keep logo/captions in
         self.static = static                           # TV snow while a channel tunes in
         self._live = {}                                # channel id -> _LiveChannel shared by its viewers
         self._live_lock = threading.Lock()
@@ -2319,7 +2321,7 @@ class Streamer:
             return None
         cues = self.catalog.subtitles(ident, file)
         text = build_ass(cues, int(seek * 1000), int(duration * 1000), self.w, self.h, self.sub_font,
-                         retro=self.sub_retro) if cues else None
+                         retro=self.sub_retro, inset=self.inset) if cues else None
         if not text:
             return None
         path = os.path.join(tmp, "subtitles.ass")
@@ -2350,10 +2352,11 @@ class Streamer:
             amap, af, n = "1:a:0", None, 2
         if bug:
             size, margin = max(32, self.h // 9), max(10, self.h // 32)
+            mx, my = margin + round(self.w * self.inset), margin + round(self.h * self.inset)
             cmd += ["-loop", "1", "-i", bug]
-            graph = ("[0:v:0]%s[base];[%d:v]format=rgba,scale=%d:%d:flags=neighbor,colorchannelmixer=aa=0.55[bug];"
+            graph = ("[0:v:0]%s[base];[%d:v]format=rgba,scale=%d:%d:flags=neighbor,colorchannelmixer=aa=0.4[bug];"
                      "[base][bug]overlay=W-w-%d:H-h-%d:shortest=1,format=yuv420p[pre]"
-                     % (self._fit(tail=False), n, size, size, margin, margin))
+                     % (self._fit(tail=False), n, size, size, mx, my))
             if vhs:
                 graph += ";" + self._vhs_graph("pre", "post") + ";[post]null%s%s[vout]" % (sf, self._tail())
             else:
@@ -3169,6 +3172,9 @@ def main():
     ap.add_argument("--gpu-device", default="auto",
                     help="GPU render node, e.g. /dev/dri/renderD129 (auto: try each one in /dev/dri)")
     ap.add_argument("--no-logo-bug", action="store_true", help="don't show the channel logo in the corner during shows")
+    ap.add_argument("--overscan", type=float, default=0, metavar="PERCENT",
+                    help="for CRTs that hide the edges of the picture: move the corner logo and subtitles this "
+                         "many percent further in (e.g. 8; default 0)")
     ap.add_argument("--no-static", action="store_true", help="don't show TV snow while a channel tunes in")
     ap.add_argument("--no-vhs-cards", action="store_true", help="draw bump cards clean instead of as worn VHS")
     ap.add_argument("--no-subtitles", action="store_true",
@@ -3257,7 +3263,7 @@ def main():
     Handler.catalog = catalog
     Handler.streamer = Streamer(catalog, a.ffmpeg, a.ffprobe, w, h, a.preset, a.maxrate, fonts, a.lead,
                                 hw=hw, bug=not a.no_logo_bug, static=not a.no_static,
-                                vhs_cards=not a.no_vhs_cards)
+                                vhs_cards=not a.no_vhs_cards, overscan=a.overscan)
     if not a.no_subtitles:
         if ffmpeg_has_filter(a.ffmpeg, "ass"):
             Handler.streamer.subs_state["on"] = True
