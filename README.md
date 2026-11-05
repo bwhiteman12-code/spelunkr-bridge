@@ -90,7 +90,7 @@ The script re-checks the lineup every 30 minutes. Everything it downloads is sav
 ## On-air touches
 
 - **Tune-in static:** when a channel starts up, you get a few seconds of black-and-white TV snow with a green on-screen "CH 300 / HACK FRAUD TV" readout and "ADJUSTING THE ANTENNA...". This plays while the first tape loads, and the show starts right where the snow ends. Turn it off with `--no-static`.
-- **Corner logo:** each channel's pixel-art logo shows faintly in the bottom-right corner during shows. It's hidden during commercials and cards, like real broadcast TV. Turn it off with `--no-logo-bug`.
+- **Corner logo:** each channel's pixel-art logo shows faintly in the bottom-right corner during shows. It's hidden during commercials and cards, like real broadcast TV. Turn it off with `--no-logo-bug`. On a CRT, see [Watching on a CRT](#watching-on-a-crt) if the logo is cut off.
 - **Worn-VHS look:** bump cards on every channel look like a worn VHS dub, so they match the tapes around them:
   - soft, smeared detail and color bleed
   - milky blacks and tape grain
@@ -134,6 +134,11 @@ The TV static, the corner logo, the VHS-style bump cards and the subtitles are o
 **Docker Compose:** set `EXTRA_ARGS=--no-static --no-logo-bug` under `environment:` in `docker-compose.yml`, then run `docker compose up -d`.
 
 The same works for any other [option](#options), e.g. `--skip vacation-slides` to leave a channel out.
+
+### Watching on a CRT
+
+CRTs hide a strip around the edge of the picture, called overscan. If your player fills the whole screen, for example with Jellyfin's **Stretch** setting on a stick feeding a CRT, the corner logo and the bottom line of subtitles can end up in that hidden strip. Add `--overscan 8` to move them 8% further in from the edges, and raise or lower the number until they sit just inside your screen. The default is 0, which suits modern TVs.
+
 
 ## Your own channels (channels.json)
 
@@ -427,6 +432,7 @@ python spelunkr2jellyfin.py --help
   --log-file FILE           also write the log to a file
   --no-static               skip the tune-in TV snow
   --no-logo-bug             skip the corner channel logo
+  --overscan 8              move the logo and subtitles 8% further in, for CRTs that hide the edges
   --no-vhs-cards            draw bump cards clean instead of as worn VHS
   --no-subtitles            don't draw spelunkr.tv's English subtitles
   --only suplex,primetime   only these channels
