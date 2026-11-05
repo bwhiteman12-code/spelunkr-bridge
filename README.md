@@ -137,7 +137,7 @@ The same works for any other [option](#options), e.g. `--skip vacation-slides` t
 
 ### Watching on a CRT
 
-CRTs hide a strip around the edge of the picture, called overscan. If your player fills the whole screen, for example with Jellyfin's **Stretch** setting on a stick feeding a CRT, the corner logo and the bottom line of subtitles can end up in that hidden strip. Add `--overscan 8` to move them 8% further in from the edges, and raise or lower the number until they sit just inside your screen. The default is 0, which suits modern TVs.
+CRTs hide a strip around the edge of the picture, called overscan. If your player fills the whole screen, for example with Jellyfin's **Stretch** setting on a stick feeding a CRT, the corner logo, the bottom line of subtitles and the VHS fuzz along the bottom edge can end up in that hidden strip. Add `--overscan 8` to move them 8% further in from the edges (the fuzz grows up from the bottom to match), and raise or lower the number until they sit just inside your screen. The default is 0, which suits modern TVs.
 
 
 ## Your own channels (channels.json)
@@ -432,7 +432,7 @@ python spelunkr2jellyfin.py --help
   --log-file FILE           also write the log to a file
   --no-static               skip the tune-in TV snow
   --no-logo-bug             skip the corner channel logo
-  --overscan 8              move the logo and subtitles 8% further in, for CRTs that hide the edges
+  --overscan 8              move the logo, subtitles and VHS fuzz 8% further in, for CRTs that hide the edges
   --no-vhs-cards            draw bump cards clean instead of as worn VHS
   --no-subtitles            don't draw spelunkr.tv's English subtitles
   --only suplex,primetime   only these channels
